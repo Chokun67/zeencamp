@@ -43,30 +43,30 @@ class _ShopMenuState extends State<ShopMenu> {
       )),
     );
   }
+
+  Widget circlePoint(heightsize, widthsize) => Container(
+      width: heightsize * 0.26,
+      height: 300,
+      decoration: const BoxDecoration(
+        color: Color(0xFFFFF280),
+        shape: BoxShape.circle,
+      ));
+
+  Widget settingButton(widthsize, heightsize) => SizedBox(
+        width: widthsize * 0.1,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            SizedBox(
+              height: heightsize * 0.03,
+            ),
+            IconButton(
+              icon: Icon(Icons.settings, size: widthsize * 0.043),
+              onPressed: () {},
+            ),
+          ],
+        ),
+      );
+
 }
-
-Widget circlePoint(heightsize, widthsize) => Container(
-    width: heightsize * 0.26,
-    height: 300,
-    decoration: const BoxDecoration(
-      color: Color(0xFFFFF280),
-      shape: BoxShape.circle,
-    ));
-
-Widget settingButton(widthsize, heightsize) => SizedBox(
-      width: widthsize * 0.223,
-      height: heightsize * 0.362,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          SizedBox(
-            height: heightsize * 0.03,
-          ),
-          IconButton(
-            icon: Icon(Icons.settings, size: widthsize * 0.087),
-            onPressed: () {},
-          ),
-        ],
-      ),
-    );
