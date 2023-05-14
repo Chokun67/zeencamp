@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:zeencamp/application/httpregister.dart';
+import 'package:provider/provider.dart';
+import 'package:zeencamp/application/accountService/accountservice.dart';
+// import 'package:zeencamp/application/httpregister.dart';
 import 'package:zeencamp/menu/menupage.dart';
+
+import '../domain/pvd_data.dart';
 
 class Registerpage extends StatefulWidget {
   const Registerpage({super.key});
@@ -155,15 +159,18 @@ class _RegisterpageState extends State<Registerpage> {
       var datebirth =
           '$dropdownValueday/$dropdownValuemounth/$dropdownValueyear';
       // late Future<Map<String, dynamic>> futureLogin;
-      apiRegister(
+      AccountService().apiRegister(
               _ctrluser.text, _ctrlpswd.text, datebirth, dropdownValuegender)
           .then((value) => {
                 if (value.code == 200)
                   {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Menu()),
+                      MaterialPageRoute(builder: (context) => const Menu(token: "1",)),
                     ),
+                    setState(() {
+                      context.read<AppData>().token = value.accessToken;
+                    }),
                     print(value.accessToken)
                   }
               });

@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:zeencamp/Authentication/register.dart';
+import 'package:zeencamp/application/accountService/accountservice.dart';
+// import 'package:zeencamp/domain/pvd_data.dart';
 import 'package:zeencamp/menu/menupage.dart';
-import 'package:zeencamp/application/httplogin.dart';
+// import 'package:zeencamp/application/httplogin.dart';
+// import 'package:provider/provider.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -17,20 +20,22 @@ class _LoginpageState extends State<Loginpage> {
     final heightsize = MediaQuery.of(context).size.height;
     final widthsize = MediaQuery.of(context).size.width;
 
-    return SingleChildScrollView(
-      child: Container(
-        width: widthsize,
-        height: heightsize,
-        color: const Color(0xFFA6A6A6),
-        child: Center(
-          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
-            SizedBox(
-                height: heightsize * 0.2,
-                width: widthsize * 0.7,
-                child: Image.asset('images/beeicon.png')),
-            const SizedBox(height: 10),
-            loginbox(heightsize, widthsize, context)
-          ]),
+    return Scaffold(
+      body: SingleChildScrollView(
+        child: Container(
+          width: widthsize,
+          height: heightsize,
+          color: const Color(0xFFA6A6A6),
+          child: Center(
+            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+              SizedBox(
+                  height: heightsize * 0.2,
+                  width: widthsize * 0.7,
+                  child: Image.asset('images/beeicon.png')),
+              const SizedBox(height: 10),
+              loginbox(heightsize, widthsize, context)
+            ]),
+          ),
         ),
       ),
     );
@@ -118,13 +123,14 @@ class _LoginpageState extends State<Loginpage> {
       );
   void btnlogin() {
     // late Future<Map<String, dynamic>> futureLogin;
-    apiLogin(_ctrlLogin.text, _ctrlPswd.text).then((value) => {
+    AccountService().apiLogin(_ctrlLogin.text, _ctrlPswd.text).then((value) => {
           if (value.code == 200)
             {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (context) => const Menu()),
+                MaterialPageRoute(builder: (context) => const Menu(token: "1",)),
               ),
+                //context.read<AppData>().token = value.accessToken,
               print(value.accessToken)
             }
           else
