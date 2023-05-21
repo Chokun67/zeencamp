@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:zeencamp/application/httpmenu.dart';
-// import 'package:provider/provider.dart';
-// import 'package:zeencamp/domain/pvd_data.dart';
+import 'package:zeencamp/menu/history.dart';
+import 'package:zeencamp/menu/qrscaner.dart';
+import 'package:zeencamp/menu/searchtype.dart';
+import 'package:zeencamp/menu/tranfer.dart';
+import 'package:provider/provider.dart';
+import 'package:zeencamp/domain/pvd_data.dart';
 
 class Menu extends StatefulWidget {
-  const Menu({Key? key,required this.token }):super(key: key);  
-  final String token;
+  // const Menu({Key? key, required this.token}) : super(key: key); ตรงนี้
+  const Menu({super.key});
+  // final String token; ตรงนี้
   @override
   State<Menu> createState() => _MenuState();
 }
@@ -13,32 +18,30 @@ class Menu extends StatefulWidget {
 class _MenuState extends State<Menu> {
   late Future<Map<String, dynamic>> datapoint;
   var pointid;
-  // var token;
+  var token;
+  var iduser;
+  var idname;
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
-    datapoint = apigetpoint(widget.token);
-    datapoint.then((value) => setState(() {
-          pointid = value['point'];
-          print(value['point']);
+    token = context.read<AppData>().token;
+    apigetpoint(token).then((value) => setState(() {
+          pointid = value.point;
+          iduser = value.id;
+          idname = value.name;
+          // print(value['point']);
         }));
-
-    
   }
 
+  List widgetOptions = [
+    const Menu(),
+    const TranFer(),
+    const HistoryPoint(),
+    const SearchType(),
+    QrScaner()
+  ];
   @override
   Widget build(BuildContext context) {
-    print(widget.token);
-
-    // token = context.read<AppData>().token;
-    // var token =
-    //     'eyJhbGciOiJIUzUxMiJ9.eyJpZCI6InF2Y1QzSWNCbVlybDFpLW4yazdOIiwicG9zaXRpb24iOiJjdXN0b21lciIsImV4cCI6MTY4NDMyMDc0MSwiaWF0IjoxNjgzMDI0NzQxfQ.CfD_qhIdUF-u4CUq0Y5kfWBgwvdf7yn7CqhOXYrlepWZkSS1MLtpim3z2aRSi8HMoXAompDt8CzGR7RrCmdMIw';
-    // datapoint = apigetpoint(widget.token);
-    // datapoint.then((value) => setState(() {
-    //       pointid = value['point'];
-    //       print(value['point']);
-    //     }));
     final heightsize = MediaQuery.of(context).size.height;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -58,18 +61,50 @@ class _MenuState extends State<Menu> {
                 color: Color(0xFFFFD600),
               ),
               child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Container(
                     width: widthsize * 0.223,
+                    child: Column(
+                      children: [
+                        Text("name $idname"),
+                        Text("id $iduser")
+                      ],
+                    ),
                   ),
                   circlePoint(heightsize, widthsize),
                   settingButton(heightsize, widthsize),
                 ],
               ),
-            ),
+            )
           ],
         ),
       )),
+      bottomNavigationBar: BottomNavigationBar(
+        type: BottomNavigationBarType.fixed,
+        unselectedFontSize: heightsize * 0.018,
+        selectedFontSize: heightsize * 0.018,
+        iconSize: heightsize * 0.04,
+        backgroundColor: const Color(0xFF4A4A4A),
+        unselectedItemColor: const Color(0xFFFFD600),
+        selectedItemColor: const Color(0xFFFF9900),
+        items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'เมนู'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.import_export), label: 'โอนพ้อย'),
+          BottomNavigationBarItem(icon: Icon(Icons.history), label: 'ประวัติ'),
+          BottomNavigationBarItem(
+              icon: Icon(Icons.store), label: 'ร้านค้าต่างๆ'),
+          BottomNavigationBarItem(icon: Icon(Icons.qr_code), label: 'แสกน QR'),
+        ],
+        currentIndex: 0,
+        onTap: (index) {
+          if (index != 0) {
+            Navigator.push(context,
+                MaterialPageRoute(builder: (context) => widgetOptions[index]));
+          }
+        },
+      ),
     );
   }
 
@@ -77,14 +112,13 @@ class _MenuState extends State<Menu> {
       width: heightsize * 0.26,
       height: 300,
       decoration: BoxDecoration(
-        color: const Color(0xFFFFF280),
-        shape: BoxShape.circle,
-        border: Border.all(color: const Color(0xFFFF9900),width: 5)
-      ),
+          color: const Color(0xFFFFF280),
+          shape: BoxShape.circle,
+          border: Border.all(color: const Color(0xFFFF9900), width: 5)),
       child: Center(
-          child: Text('$pointid',
-              style:
-                  const TextStyle(fontSize: 26, fontWeight: FontWeight.bold))));
+          child: Text('$pointid \nPoint',
+              style: TextStyle(
+                  fontSize: heightsize * 0.05, fontWeight: FontWeight.bold))));
 
   Widget settingButton(widthsize, heightsize) => SizedBox(
         width: widthsize * 0.1,

@@ -15,6 +15,7 @@ class Registerpage extends StatefulWidget {
 
 class _RegisterpageState extends State<Registerpage> {
   final _ctrluser = TextEditingController();
+  final _ctrlusername = TextEditingController();
   final _ctrlpswd = TextEditingController();
   final _ctrlconfirm = TextEditingController();
   @override
@@ -56,7 +57,7 @@ class _RegisterpageState extends State<Registerpage> {
                 width: 7,
                 style: BorderStyle.solid),
             color: const Color(0xFFFFD600)),
-        height: heightsize * 0.6,
+        height: heightsize * 0.7,
         width: widthsize * 0.8,
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -72,6 +73,8 @@ class _RegisterpageState extends State<Registerpage> {
               children: [
                 const Text("Email"),
                 textfielduser(heightsize, widthsize),
+                const Text("username"),
+                textfieldusername(heightsize, widthsize),
                 const Text("Password"),
                 textfieldpswd(heightsize, widthsize),
                 const Text("Confirm Password"),
@@ -97,6 +100,20 @@ class _RegisterpageState extends State<Registerpage> {
         height: heightsize * 0.05,
         child: TextField(
           controller: _ctrluser,
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
+                  borderRadius: BorderRadius.all(Radius.zero)),
+              fillColor: Colors.white,
+              filled: true),
+        ),
+      );
+
+    Widget textfieldusername(heightsize, widthsize) => SizedBox(
+        width: widthsize * 0.72,
+        height: heightsize * 0.05,
+        child: TextField(
+          controller: _ctrlusername,
           decoration: const InputDecoration(
               border: OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
@@ -154,24 +171,26 @@ class _RegisterpageState extends State<Registerpage> {
           ),
         ),
       );
+      
   void btnregister() {
     if (_ctrlpswd.text == _ctrlconfirm.text) {
       var datebirth =
           '$dropdownValueday/$dropdownValuemounth/$dropdownValueyear';
       // late Future<Map<String, dynamic>> futureLogin;
-      AccountService().apiRegister(
-              _ctrluser.text, _ctrlpswd.text, datebirth, dropdownValuegender)
+      AccountService()
+          .apiRegister(
+              _ctrluser.text, _ctrlusername.text,_ctrlpswd.text, datebirth, dropdownValuegender)
           .then((value) => {
-                if (value.code == 200)
+                if (value != null)
                   {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => const Menu(token: "1",)),
+                      MaterialPageRoute(builder: (context) => const Menu()),
                     ),
                     setState(() {
                       context.read<AppData>().token = value.accessToken;
+                      context.read<AppData>().idAccount = value.idAccount;
                     }),
-                    print(value.accessToken)
                   }
               });
     } else {

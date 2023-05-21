@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/domain/pvd_data.dart';
+import 'package:zeencamp/menu/qrscaner.dart';
 import 'Authentication/login.dart';
 import 'package:flutter/services.dart';
 
-import 'shop/shopmenu.dart';
 
 void main() async {
 
@@ -28,7 +28,7 @@ class MainApp extends StatelessWidget {
     return const MaterialApp(
         title: 'Flutter Auth',
         home: Scaffold(
-          body: ShopMenu(),
+          body: Loginpage(),
         ));
   }
 }

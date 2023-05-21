@@ -1,14 +1,44 @@
 import 'package:flutter/material.dart';
-import 'package:zeencamp/menu/searchtype.dart';
+import 'package:provider/provider.dart';
+import 'package:zeencamp/application/httpmenu.dart';
+import 'package:zeencamp/application/tranferService/tranferservice.dart';
+import 'package:zeencamp/domain/historydm.dart';
+import 'package:zeencamp/menu/detailtranfer.dart';
 
-class History extends StatefulWidget {
-  const History({super.key});
+import '../domain/pvd_data.dart';
+
+class HistoryPoint extends StatefulWidget {
+  const HistoryPoint({super.key});
 
   @override
-  State<History> createState() => _HistoryState();
+  State<HistoryPoint> createState() => _HistoryPointState();
 }
 
-class _HistoryState extends State<History> {
+class _HistoryPointState extends State<HistoryPoint> {
+  List<DepositModel> history = [];
+  late Future<Map<String, dynamic>> datapoint;
+  var token;
+  var pointid;
+  var idAccount;
+  @override
+  void initState() {
+    super.initState();
+    idAccount = context.read<AppData>().idAccount;
+    token = context.read<AppData>().token;
+    apigetpoint(token).then((value) => setState(() {
+          pointid = value.point;
+        }));
+    fetchData();
+  }
+
+  void fetchData() async {
+    token = context.read<AppData>().token;
+    List<DepositModel> fetchedStores = await TranferService().getTranfer(token);
+    setState(() {
+      history = fetchedStores;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
@@ -32,15 +62,12 @@ class _HistoryState extends State<History> {
                           BorderRadius.only(topLeft: Radius.circular(90)),
                       color: Color(0xFF4A4A4A),
                     ),
-                    child: historyTitle(widthsize, heightsize)),
+                    child: historyPointTitle(widthsize, heightsize)),
                 Container(
                     color: const Color(0xFF4A4A4A),
                     width: widthsize,
-                    height: heightsize - heightsize * 0.284 - heightsize * 0.15,
-                    child: historyTranfer(widthsize, heightsize, context)),
-                Container(
-                  color: const Color(0xFF4A4A4A),
-                )
+                    height: heightsize - heightsize * 0.284 - heightsize * 0.2,
+                    child: historyPointTranfer(widthsize, heightsize, context)),
               ],
             ),
           ),
@@ -48,7 +75,9 @@ class _HistoryState extends State<History> {
               top: widthsize * 0.055,
               left: widthsize * 0.055,
               child: IconButton(
-                onPressed: () {  Navigator.pop(context);},
+                onPressed: () {
+                  Navigator.pop(context);
+                },
                 icon: const Icon(Icons.arrow_back_ios),
                 iconSize: 30,
               )),
@@ -56,7 +85,7 @@ class _HistoryState extends State<History> {
               bottom: 0,
               child: Container(
                 width: widthsize,
-                height: heightsize * 0.01,
+                height: heightsize * 0.03,
                 color: const Color(0xFF4A4A4A),
               ))
         ],
@@ -74,7 +103,7 @@ class _HistoryState extends State<History> {
           Container(
             padding: EdgeInsets.all(widthsize * 0.05),
             width: widthsize * 0.843,
-            height: heightsize * 0.164,
+            height: heightsize * 0.166,
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(30)),
               color: Color(0xFF4A4A4A),
@@ -95,7 +124,7 @@ class _HistoryState extends State<History> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("5000",
+                    Text("$pointid",
                         style: TextStyle(
                             color: const Color(0xFFFFD600),
                             fontSize: heightsize * 0.06,
@@ -113,35 +142,20 @@ class _HistoryState extends State<History> {
         ],
       ));
 
-  Widget historyTitle(widthsize, heightsize) => Column(
+  Widget historyPointTitle(widthsize, heightsize) => Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Text("History",
+          Text("HistoryPoint",
               style: TextStyle(
                   color: const Color(0xFFFFFFFF),
                   fontSize: heightsize * 0.05,
                   fontWeight: FontWeight.bold)),
         ],
       );
-  int number = 1;
-  int money = 10;
-  bool mark = true;
-  Widget historyTranfer(widthsize, heightsize, context) =>
+
+  Widget historyPointTranfer(widthsize, heightsize, context) =>
       SingleChildScrollView(
         child: Column(children: [
-          ElevatedButton(
-              onPressed: () {
-                Navigator.push(context,
-                    MaterialPageRoute(builder: (context) => const SearchType()));
-              },
-              child: const Text("Testseach")),
-          ElevatedButton(
-              onPressed: () {
-                setState(() {
-                  mark = mark ? false : true;
-                });
-              },
-              child: const Text("Login")),
           Column(
             children: [
               buildList(widthsize, heightsize, context),
@@ -153,54 +167,74 @@ class _HistoryState extends State<History> {
   Widget buildList(widthsize, heightsize, context) => Column(
         children: [
           ListView.builder(
-            itemCount: 7,
+            itemCount: history.length,
             padding: EdgeInsets.all(widthsize * 0.04),
             physics: const ScrollPhysics(parent: null),
             shrinkWrap: true,
             itemBuilder: (BuildContext buildList, int index) {
-              return Container(
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.all(Radius.circular(15)),
-                  color: Color(0xFFFFFFFF),
-                ),
-                margin: EdgeInsets.only(bottom: widthsize * 0.025),
-                padding: EdgeInsets.only(
-                    bottom: widthsize * 0.02,
-                    top: widthsize * 0.02,
-                    left: widthsize * 0.07,
-                    right: widthsize * 0.06),
-                // width: widthsize * 0.87,
-                height: heightsize * 0.1,
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text("29 เมษ 66 ,17:15",
-                            style: TextStyle(fontSize: heightsize * 0.02)),
-                        Text(
-                          mark ? "ได้รับ Point" : "โอน Point",
-                          style: TextStyle(
-                              fontSize: heightsize * 0.03,
-                              fontWeight: FontWeight.bold),
-                        )
-                      ],
-                    ),
-                    Text(
-                      mark ? "+$money" : "-$money",
-                      style: TextStyle(
-                          color: mark
-                              ? const Color(0xFF2CC14D)
-                              : const Color(0xFFEB3F3F),
-                          fontSize: heightsize * 0.04,
-                          fontWeight: FontWeight.bold),
-                    )
-                  ],
+              return InkWell(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => DetailTranfer(
+                              idAccount: idAccount,
+                              state: history[index].state,
+                              payee: history[index].opposite,
+                              date: "${history[index].date}",
+                              point: history[index].point)));
+                },
+                child: Container(
+                  decoration: const BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(15)),
+                    color: Color(0xFFFFFFFF),
+                  ),
+                  margin: EdgeInsets.only(bottom: widthsize * 0.025),
+                  padding: EdgeInsets.only(
+                      bottom: widthsize * 0.02,
+                      top: widthsize * 0.02,
+                      left: widthsize * 0.07,
+                      right: widthsize * 0.06),
+                  height: heightsize * 0.1,
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text("${history[index].date}",
+                              style: TextStyle(fontSize: heightsize * 0.02)),
+                          Text(
+                            isDeposit(history, index)
+                                ? "ได้รับ Point"
+                                : "โอน Point",
+                            style: TextStyle(
+                                fontSize: heightsize * 0.03,
+                                fontWeight: FontWeight.bold),
+                          )
+                        ],
+                      ),
+                      Text(
+                        isDeposit(history, index)
+                            ? "+${history[index].point}"
+                            : "${history[index].point}",
+                        style: TextStyle(
+                            color: isDeposit(history, index)
+                                ? const Color(0xFF2CC14D)
+                                : const Color(0xFFEB3F3F),
+                            fontSize: heightsize * 0.04,
+                            fontWeight: FontWeight.bold),
+                      )
+                    ],
+                  ),
                 ),
               );
             },
           ),
         ],
       );
+
+  bool isDeposit(List history, int index) {
+    return history[index].state == "deposit";
+  }
 }

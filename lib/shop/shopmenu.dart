@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zeencamp/application/httpmenu.dart';
+import 'package:zeencamp/domain/pvd_data.dart';
 import 'package:zeencamp/menu/history.dart';
 import 'package:zeencamp/menu/tranfer.dart';
 import 'package:zeencamp/shop/buypoint.dart';
@@ -17,6 +20,23 @@ class _ShopMenuState extends State<ShopMenu> {
       color: const Color(0xFF4A4A4A),
       fontSize: heightsize * 0.04,
       fontWeight: FontWeight.bold);
+
+   late Future<Map<String, dynamic>> datapoint;
+  var pointid;
+  var token;
+  var iduser;
+  var idname;
+  @override
+  void initState() {
+    super.initState();
+    token = context.read<AppData>().token;
+    apigetpoint(token).then((value) => setState(() {
+          pointid = value.point;
+          iduser = value.id;
+          idname = value.name;
+          // print(value['point']);
+        }));
+  }
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
@@ -73,7 +93,11 @@ class _ShopMenuState extends State<ShopMenu> {
       decoration: BoxDecoration(
           color: const Color(0xFFFFF280),
           shape: BoxShape.circle,
-          border: Border.all(color: const Color(0xFFFF9900), width: 5)));
+          border: Border.all(color: const Color(0xFFFF9900), width: 5)),
+      child: Center(
+          child: Text('$pointid \nPoint',
+              style: TextStyle(
+                  fontSize: heightsize * 0.05, fontWeight: FontWeight.bold))));
 
   Widget settingButton(widthsize, heightsize) => SizedBox(
         width: widthsize * 0.1,
@@ -121,7 +145,7 @@ class _ShopMenuState extends State<ShopMenu> {
 
   Widget tranFer(widthsize, heightsize) => InkWell(
         onTap: () => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const Tranfer())),
+            context, MaterialPageRoute(builder: (context) => const TranFer())),
         child: Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -153,7 +177,7 @@ class _ShopMenuState extends State<ShopMenu> {
 
   Widget historyPoint(widthsize, heightsize) => InkWell(
         onTap: () => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const History())),
+            context, MaterialPageRoute(builder: (context) => const HistoryPoint())),
         child: Container(
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),

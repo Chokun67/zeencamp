@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:zeencamp/Authentication/register.dart';
 import 'package:zeencamp/application/accountService/accountservice.dart';
-// import 'package:zeencamp/domain/pvd_data.dart';
+import 'package:zeencamp/domain/pvd_data.dart';
 import 'package:zeencamp/menu/menupage.dart';
-// import 'package:zeencamp/application/httplogin.dart';
-// import 'package:provider/provider.dart';
+import 'package:provider/provider.dart';
+import 'package:zeencamp/shop/shopmenu.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -13,6 +13,7 @@ class Loginpage extends StatefulWidget {
 }
 
 class _LoginpageState extends State<Loginpage> {
+  bool obscureText = true;
   final _ctrlLogin = TextEditingController();
   final _ctrlPswd = TextEditingController();
   @override
@@ -27,7 +28,8 @@ class _LoginpageState extends State<Loginpage> {
           height: heightsize,
           color: const Color(0xFFA6A6A6),
           child: Center(
-            child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            child:
+                Column(mainAxisAlignment: MainAxisAlignment.center, children: [
               SizedBox(
                   height: heightsize * 0.2,
                   width: widthsize * 0.7,
@@ -63,9 +65,11 @@ class _LoginpageState extends State<Loginpage> {
                   fontSize: heightsize * 0.03, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: heightsize * 0.04),
-            textfielduser(),
-            const SizedBox(height: 20),
-            textfieldpassword(),
+            textfielduser(heightsize),
+            SizedBox(
+              height: heightsize * 0.01,
+            ),
+            textfieldpassword(heightsize),
             pwRemember(),
             SizedBox(height: heightsize * 0.047),
             loginButton(heightsize, widthsize, context),
@@ -74,24 +78,55 @@ class _LoginpageState extends State<Loginpage> {
         ),
       );
 
-  Widget textfielduser() => TextField(
-        controller: _ctrlLogin,
-        decoration: const InputDecoration(
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
-                borderRadius: BorderRadius.all(Radius.zero)),
-            fillColor: Color.fromARGB(255, 78, 75, 75),
-            filled: true),
+  Widget textfielduser(heightsize) => Container(
+        width: double.infinity,
+        height: heightsize * 0.078,
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.zero),
+            border: Border.all(
+                color: const Color(0xFFAD6800),
+                width: 2,
+                style: BorderStyle.solid),),
+        child: TextField(
+          controller: _ctrlLogin,
+          decoration: const InputDecoration(
+              border: OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
+                  borderRadius: BorderRadius.all(Radius.zero)),
+              fillColor: Color.fromARGB(255, 78, 75, 75),
+              filled: true,
+              hintText: "Email"),
+        ),
       );
 
-  Widget textfieldpassword() => TextField(
-        controller: _ctrlPswd,
-        decoration: const InputDecoration(
-            border: OutlineInputBorder(
-                borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
-                borderRadius: BorderRadius.all(Radius.zero)),
-            fillColor: Color.fromARGB(255, 78, 75, 75),
-            filled: true),
+  Widget textfieldpassword(heightsize) => Container(
+        width: double.infinity,
+        height: heightsize * 0.078,
+        decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(Radius.zero),
+            border: Border.all(
+                color: const Color(0xFFAD6800),
+                width: 2,
+                style: BorderStyle.solid),),
+        child: TextField(
+          controller: _ctrlPswd,
+          obscureText: obscureText,
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
+                  borderRadius: BorderRadius.all(Radius.zero)),
+              fillColor: const Color.fromARGB(255, 78, 75, 75),
+              filled: true,
+              hintText: "Password",
+              suffixIcon: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      obscureText = !obscureText;
+                    });
+                  },
+                  child: Icon(
+                      obscureText ? Icons.visibility : Icons.visibility_off))),
+        ),
       );
 
   Widget pwRemember() => Row(
@@ -121,17 +156,33 @@ class _LoginpageState extends State<Loginpage> {
           ),
         ),
       );
+
   void btnlogin() {
     // late Future<Map<String, dynamic>> futureLogin;
     AccountService().apiLogin(_ctrlLogin.text, _ctrlPswd.text).then((value) => {
-          if (value.code == 200)
+          if (value != null)
             {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const Menu(token: "1",)),
-              ),
-                //context.read<AppData>().token = value.accessToken,
-              print(value.accessToken)
+              if (value.isstore == false)
+                {
+                  {
+                    Navigator.push(
+                      // context,
+                      // MaterialPageRoute(builder: (context) => const Menu(token: "1",)),
+                      context,
+                      MaterialPageRoute(builder: (context) => const Menu()),
+                    ),
+                    context.read<AppData>().token = value.accessToken,
+                    context.read<AppData>().idAccount = value.idAccount,
+                  }
+                }
+              else
+                {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const ShopMenu()),
+                  ),
+                  context.read<AppData>().token = value.accessToken,
+                }
             }
           else
             print("Error")

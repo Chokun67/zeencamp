@@ -1,14 +1,37 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zeencamp/application/tranferService/tranferservice.dart';
+import 'package:zeencamp/menu/receipt.dart';
 
-class Tranfer extends StatefulWidget {
-  const Tranfer({super.key});
+import '../application/httpmenu.dart';
+import '../domain/pvd_data.dart';
+
+class TranFer extends StatefulWidget {
+  const TranFer({super.key});
 
   @override
-  State<Tranfer> createState() => _TranferState();
+  State<TranFer> createState() => _TranFerState();
 }
 
-class _TranferState extends State<Tranfer> {
+class _TranFerState extends State<TranFer> {
   final _ctrlToID = TextEditingController();
+  final _ctrlAmount = TextEditingController();
+  late Future<Map<String, dynamic>> datapoint;
+  var pointid;
+  var token;
+  var idAccount;
+  @override
+  void initState() {
+ 
+    super.initState();
+    token = context.read<AppData>().token;
+    idAccount = context.read<AppData>().idAccount;
+    apigetpoint(token).then((value) => setState(() {
+          pointid = value.point;
+          
+        }));
+  }
+
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
@@ -39,7 +62,7 @@ class _TranferState extends State<Tranfer> {
                       ],
                     ),
                   ),
-                  formTranfer(widthsize, heightsize),
+                  formTranFer(widthsize, heightsize),
                 ],
               ),
             ),
@@ -47,16 +70,27 @@ class _TranferState extends State<Tranfer> {
                 top: widthsize * 0.077,
                 left: widthsize * 0.077,
                 child: InkWell(
-                    onTap: () =>Navigator.pop(context),
+                    onTap: () => Navigator.pop(context),
                     child: Image.asset('images/back.png'))),
             Positioned(
                 bottom: widthsize * 0.2,
                 right: widthsize * 0.045,
-                child: Image.asset('images/correct.png')),
+                child: InkWell(
+                    onTap: btntranfer, child: Image.asset('images/correct.png'))),
           ],
         )),
       ),
     );
+  }
+
+  void btntranfer(){
+    TranferService().apiTranfer(_ctrlToID.text, int.parse(_ctrlAmount.text), token).then((value) => {
+      if(value.code == 200){
+        Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => Receipt(idAccount: idAccount,message: value.message,state: value.state,payee: value.payee,date: value.date,point: value.point,balance: value.balance,)),)
+      }
+    });
   }
 
   Widget title(widthsize, heightsize) => SizedBox(
@@ -101,7 +135,7 @@ class _TranferState extends State<Tranfer> {
                 SizedBox(
                   height: heightsize * 0.03,
                 ),
-                Text("USER ID 3104",
+                Text("USER ID $idAccount",
                     style: TextStyle(
                         color: const Color(0xFFFFFFFF),
                         fontSize: heightsize * 0.025,
@@ -109,7 +143,7 @@ class _TranferState extends State<Tranfer> {
                 SizedBox(
                   height: heightsize * 0.04,
                 ),
-                Text("25 Point",
+                Text("$pointid Point",
                     style: TextStyle(
                         color: const Color(0xFFFFFFFF),
                         fontSize: heightsize * 0.05,
@@ -120,7 +154,7 @@ class _TranferState extends State<Tranfer> {
         ],
       ));
 
-  Widget formTranfer(widthsize, heightsize) => Padding(
+  Widget formTranFer(widthsize, heightsize) => Padding(
         padding: EdgeInsets.all(widthsize * 0.05),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
           Text("ไปยัง ID",
@@ -147,7 +181,7 @@ class _TranferState extends State<Tranfer> {
       );
 
   Widget fieldAmount(widthsize, heightsize) => TextField(
-        controller: _ctrlToID,
+        controller: _ctrlAmount,
         decoration: InputDecoration(
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             fillColor: const Color(0xFFD9D9D9),

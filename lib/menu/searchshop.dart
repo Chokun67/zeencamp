@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:zeencamp/application/storeService/storeservice.dart';
 import 'package:zeencamp/background.dart';
+import 'package:zeencamp/menu/test.dart';
 
+import '../domain/allstore.dart';
+import '../domain/pvd_data.dart';
 import 'shopdetail.dart';
 
 class SearchShop extends StatefulWidget {
@@ -11,6 +16,25 @@ class SearchShop extends StatefulWidget {
 }
 
 class _SearchShopState extends State<SearchShop> {
+  List<Allstore> stores = [];
+  var token;
+  @override
+  initState() {
+    super.initState();
+    fetchData();
+    // token = context.read<AppData>().token;
+    // List<Allstore> stores = await getStores(token);
+  }
+
+  void fetchData() async {
+    token = context.read<AppData>().token;
+    List<Allstore> fetchedStores = await StoresService().getStores(token);
+    setState(() {
+      stores = fetchedStores;
+      print(stores);
+    });
+  }
+
   final _ctrlSearch = TextEditingController();
   @override
   Widget build(BuildContext context) {
@@ -26,13 +50,13 @@ class _SearchShopState extends State<SearchShop> {
             children: [
               Column(
                 children: [
-                  MyStyle().buildBackground(widthsize, heightsize,context),
+                  MyStyle().buildBackground(widthsize, heightsize, context),
                   fieldSearchType(widthsize, heightsize),
                   Container(
                       color: const Color(0xFF4A4A4A),
                       width: widthsize,
                       height:
-                          heightsize - heightsize * 0.284 - heightsize * 0.1,
+                          heightsize - heightsize * 0.284 - heightsize * 0.15,
                       child: shopName(widthsize, heightsize, context)),
                 ],
               )
@@ -65,17 +89,19 @@ class _SearchShopState extends State<SearchShop> {
         child: Column(
           children: [
             ListView.builder(
-              itemCount: 8,
+              itemCount: stores.length,
               padding: EdgeInsets.all(widthsize * 0.04),
               physics: const ScrollPhysics(parent: null),
               shrinkWrap: true,
-              itemBuilder: (BuildContext buildList, int index) {
+              itemBuilder: (BuildContext context, int index) {
                 return InkWell(
                   onTap: () => {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const Shopdetail()))
+                            builder: (context) => Shopdetail(
+                                  idshop: stores[index].id,nameshop: stores[index].name,
+                                )))
                   },
                   child: Container(
                       decoration: const BoxDecoration(
@@ -85,13 +111,25 @@ class _SearchShopState extends State<SearchShop> {
                       margin: EdgeInsets.only(bottom: widthsize * 0.025),
                       padding: EdgeInsets.all(widthsize * 0.05),
                       // width: widthsize * 0.87,
-                      height: heightsize * 0.1,
-                      child: Text(
-                        "ร้านไก่ย่าง",
-                        style: TextStyle(
-                            color: const Color(0xFFEB3F3F),
-                            fontSize: heightsize * 0.035,
-                            fontWeight: FontWeight.bold),
+                      height: heightsize * 0.13,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "ร้าน ${stores[index].name}",
+                            style: TextStyle(
+                                color: const Color(0xFFEB3F3F),
+                                fontSize: heightsize * 0.035,
+                                fontWeight: FontWeight.bold),
+                          ),
+                          Text(
+                            "id ${stores[index].id}",
+                            style: TextStyle(
+                                color: const Color(0xFFEB3F3F),
+                                fontSize: heightsize * 0.022,
+                                fontWeight: FontWeight.bold),
+                          ),
+                        ],
                       )),
                 );
               },

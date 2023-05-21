@@ -4,26 +4,48 @@ import 'dart:convert';
 import '../../domain/customer.dart';
 import '../../domain/register.dart' show Register;
 
-
 class AccountService {
-  Future<Customer> apiLogin(String login, String pswd) async {
-  return const Customer(code: 200, accessToken: "123");
-  // var response = await http.post(
-  //     Uri.parse('http://10.32.55.145:5000/api/v1/user/sign_in'),
-  //     headers: <String, String>{'content-type': 'application/json'},
-  //     body: jsonEncode(
-  //         <String, String>{'username': login, 'password': pswd}));
+  var ipLogin = "18.141.143.217:17003";
 
-  // return Customer.fromJson(jsonDecode(response.body));
-}
+  Future<Customer?> apiLogin(String login, String pswd) async {
+    var response = await http.post(
+        Uri.parse('http://$ipLogin/api/v1/member/login'),
+        headers: <String, String>{'content-type': 'application/json'},
+        body:
+            jsonEncode(<String, String>{'username': login, 'password': pswd}));
+    // print(response.body);
+    // print(response.statusCode);
+    if (response.statusCode == 200) {
+      return Customer.fromJson(jsonDecode(response.body));
+    } else {
+      return null;
+    }
+  }
 
- Future<Register> apiRegister(String login, String pswd,String date,String gender) async {
-  var response = await http.post(
-      Uri.parse('http://10.32.55.145:5000/api/v1/user/sign_up'),
-      headers: <String, String>{'content-type': 'application/json'},
-      body: jsonEncode(<String, String>{'username': login, 'password': pswd,'birthday': date,'sex':gender}));
-  // if (response.statusCode == 200) {
-  return Register.fromJson(jsonDecode(response.body));
-  // }
-}
+  Future<Register?> apiRegister(String login, String username, String pswd,
+      String date, String gender) async {
+    print("email" + login);
+    print("user" + username);
+    print(pswd);
+    print(date);
+    print(gender);
+    var response =
+        await http.post(Uri.parse('http://$ipLogin/api/v1/member/register'),
+            headers: <String, String>{'Content-Type': 'application/json'},
+            body: jsonEncode(<String, String>{
+              'name': login,
+              'username': username,
+              'password': pswd,
+              'birthday': date,
+              'sex': gender
+            }));
+    // print(response.body);
+    // print(response.statusCode);
+    if (response.statusCode == 200) {
+      return Register.fromJson(jsonDecode(response.body));
+    } else {
+      print(response.statusCode);
+      return null;
+    }
+  }
 }

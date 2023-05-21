@@ -1,24 +1,20 @@
 import 'package:flutter/material.dart';
 
-class Receipt extends StatelessWidget {
-  // const Receipt({super.key});
-  const Receipt(
+class DetailTranfer extends StatelessWidget {
+  // const DetailTranfer({super.key});
+  const DetailTranfer(
       {Key? key,
       required this.idAccount,
-      required this.message,
       required this.state,
       required this.payee,
       required this.date,
-      required this.point,
-      required this.balance})
+      required this.point,})
       : super(key: key);
   final String idAccount;
-  final String message;
   final String state;
   final String payee;
   final String date;
   final int point;
-  final int balance;
 
   TextStyle stylewhite(heightsize) => TextStyle(
       color: const Color(0xFFFFFFFF),
@@ -50,7 +46,7 @@ class Receipt extends StatelessWidget {
                   child: Column(
                     children: [
                       title(widthsize, heightsize),
-                      titleReceipt(widthsize, heightsize),
+                      titleDetailTranfer(widthsize, heightsize),
                     ],
                   ),
                 ),
@@ -103,11 +99,8 @@ class Receipt extends StatelessWidget {
         ],
       ));
 
-  Widget titleReceipt(widthsize, heightsize) => Container(
-        padding: EdgeInsets.only(
-            left: 0.06 * widthsize,
-            top: 0.05 * widthsize,
-            right: 0.04 * widthsize),
+  Widget titleDetailTranfer(widthsize, heightsize) => Container(
+        padding: EdgeInsets.only(left: 0.06 * widthsize, top: 0.05 * widthsize,right: 0.04*widthsize),
         height: heightsize * 0.195,
         width: widthsize * 0.9,
         decoration: BoxDecoration(
@@ -133,26 +126,12 @@ class Receipt extends StatelessWidget {
                         fontWeight: FontWeight.bold)),
                 Text(point.toString(),
                     style: TextStyle(
-                        color: isDeposit(state)?const Color(0xFF2CC14D):const Color(0xFFEB3F3F),
+                        color: const Color(0xFFEB3F3F),
                         fontSize: heightsize * 0.03,
                         fontWeight: FontWeight.bold)),
               ],
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text("ยอดคงเหลือ",
-                    style: TextStyle(
-                        color: const Color(0xFFFFFFFF),
-                        fontSize: heightsize * 0.025,
-                        fontWeight: FontWeight.bold)),
-                Text(balance.toString(),
-                    style: TextStyle(
-                        color: const Color(0xFF2CC14D),
-                        fontSize: heightsize * 0.03,
-                        fontWeight: FontWeight.bold)),
-              ],
-            )
+            
           ],
         ),
       );
@@ -169,7 +148,7 @@ class Receipt extends StatelessWidget {
             left: widthsize * 0.05,
             bottom: widthsize * 0.02,
             top: widthsize * 0.03),
-        child: Text(isDeposit(state)?"รับ Point":"โอน Point",
+        child: Text("โอน Point",
             style: TextStyle(
                 color: const Color(0xFFFFFFFF),
                 fontSize: heightsize * 0.03,
@@ -243,8 +222,4 @@ class Receipt extends StatelessWidget {
           ],
         ),
       );
-
-  bool isDeposit(String state) {
-    return state == "deposit";
-  }
 }
