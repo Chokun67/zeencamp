@@ -6,9 +6,9 @@ import 'dart:async';
 import 'dart:convert';
 
 class TranferService {
-  var ipLogin = "10.32.69.1:5000";
+  var ipLogin = "18.141.143.217:17003";
 
-  Future<Tranfer> apiTranfer(String idTo, int pointTo, String token) async {
+  Future<Tranfer?> apiTranfer(String idTo, int pointTo, String token) async {
     // return const Customer(code: 200, accessToken: "123");
     var response = await http.put(
         Uri.parse('http://$ipLogin/api/v1/member/transfer-point'),
@@ -18,10 +18,12 @@ class TranferService {
         },
         body: jsonEncode(<String, dynamic>{'payee': idTo, 'point': pointTo}));
 
-    print(response.body);
-    print(response.statusCode);
-  
-    return Tranfer.fromJson(jsonDecode(response.body));
+    // print(response.body);
+    // print(response.statusCode);
+    if (response.statusCode == 200) {
+      return Tranfer.fromJson(jsonDecode(response.body));
+    }
+    return null;
   }
 
   Future<List<DepositModel>> getTranfer(token) async {

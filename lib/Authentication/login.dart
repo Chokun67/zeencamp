@@ -6,6 +6,8 @@ import 'package:zeencamp/menu/menupage.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/shop/shopmenu.dart';
 
+import '../background.dart';
+
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
   @override
@@ -65,11 +67,23 @@ class _LoginpageState extends State<Loginpage> {
                   fontSize: heightsize * 0.03, fontWeight: FontWeight.bold),
             ),
             SizedBox(height: heightsize * 0.04),
-            textfielduser(heightsize),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("Email",style: TextStyle(fontSize: heightsize*0.015),),
+              ],
+            ),
+            textFieldUser(heightsize),
             SizedBox(
               height: heightsize * 0.01,
             ),
-            textfieldpassword(heightsize),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Text("Password",style: TextStyle(fontSize: heightsize*0.015)),
+              ],
+            ),
+            textFieldPassword(heightsize),
             pwRemember(),
             SizedBox(height: heightsize * 0.047),
             loginButton(heightsize, widthsize, context),
@@ -78,44 +92,50 @@ class _LoginpageState extends State<Loginpage> {
         ),
       );
 
-  Widget textfielduser(heightsize) => Container(
+  Widget textFieldUser(heightsize) => Container(
         width: double.infinity,
-        height: heightsize * 0.078,
         decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.zero),
-            border: Border.all(
-                color: const Color(0xFFAD6800),
-                width: 2,
-                style: BorderStyle.solid),),
+          borderRadius: const BorderRadius.all(Radius.zero),
+          border: Border.all(
+              color: const Color(0xFFAD6800),
+              width: 2,
+              style: BorderStyle.solid),
+        ),
         child: TextField(
           controller: _ctrlLogin,
+          keyboardType: TextInputType.emailAddress,
+          style: TextStyle(fontSize: heightsize * 0.02),
           decoration: const InputDecoration(
               border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
+                  borderSide: BorderSide(
+                      color: Color(0xFFAD6800),
+                      width: 2,
+                      style: BorderStyle.solid),
                   borderRadius: BorderRadius.all(Radius.zero)),
-              fillColor: Color.fromARGB(255, 78, 75, 75),
+              fillColor: Color(0xFF4A4A4A),
               filled: true,
               hintText: "Email"),
         ),
       );
 
-  Widget textfieldpassword(heightsize) => Container(
+  Widget textFieldPassword(heightsize) => Container(
         width: double.infinity,
-        height: heightsize * 0.078,
         decoration: BoxDecoration(
-            borderRadius: const BorderRadius.all(Radius.zero),
-            border: Border.all(
-                color: const Color(0xFFAD6800),
-                width: 2,
-                style: BorderStyle.solid),),
+          borderRadius: const BorderRadius.all(Radius.zero),
+          border: Border.all(
+              color: const Color(0xFFAD6800),
+              width: 2,
+              style: BorderStyle.solid),
+        ),
         child: TextField(
           controller: _ctrlPswd,
           obscureText: obscureText,
+          style: TextStyle(fontSize: heightsize * 0.02),
           decoration: InputDecoration(
               border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
                   borderRadius: BorderRadius.all(Radius.zero)),
-              fillColor: const Color.fromARGB(255, 78, 75, 75),
+              fillColor: const Color(0xFF4A4A4A),
               filled: true,
               hintText: "Password",
               suffixIcon: GestureDetector(
@@ -129,9 +149,9 @@ class _LoginpageState extends State<Loginpage> {
         ),
       );
 
-  Widget pwRemember() => Row(
+  Widget pwRemember() => const Row(
         mainAxisAlignment: MainAxisAlignment.start,
-        children: const [
+        children: [
           Text("ลืม Password ?"),
         ],
       );
@@ -185,7 +205,10 @@ class _LoginpageState extends State<Loginpage> {
                 }
             }
           else
-            print("Error")
+            {
+              showAlertBox(
+                  context, 'แจ้งเตือน', 'ชื่อผู้ใช้หรือรหัสผ่านพิดพลาด')
+            }
         });
   }
 

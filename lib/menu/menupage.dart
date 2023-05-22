@@ -6,6 +6,7 @@ import 'package:zeencamp/menu/searchtype.dart';
 import 'package:zeencamp/menu/tranfer.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/domain/pvd_data.dart';
+import 'package:zeencamp/shop/setting.dart';
 
 class Menu extends StatefulWidget {
   // const Menu({Key? key, required this.token}) : super(key: key); ตรงนี้
@@ -17,19 +18,20 @@ class Menu extends StatefulWidget {
 
 class _MenuState extends State<Menu> {
   late Future<Map<String, dynamic>> datapoint;
-  var pointid;
-  var token;
-  var iduser;
-  var idname;
+  var pointid = 0;
+  var token = "";
+  var iduser = "";
+  var idname = "";
+  var idAccount = "";
   @override
   void initState() {
     super.initState();
     token = context.read<AppData>().token;
+    idAccount = context.read<AppData>().idAccount;
     apigetpoint(token).then((value) => setState(() {
           pointid = value.point;
           iduser = value.id;
           idname = value.name;
-          // print(value['point']);
         }));
   }
 
@@ -38,7 +40,7 @@ class _MenuState extends State<Menu> {
     const TranFer(),
     const HistoryPoint(),
     const SearchType(),
-    QrScaner()
+    const QrScaner()
   ];
   @override
   Widget build(BuildContext context) {
@@ -46,39 +48,41 @@ class _MenuState extends State<Menu> {
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
-          child: Container(
-        width: widthsize,
-        height: heightsize,
-        color: const Color(0xFF4A4A4A),
-        child: Column(
-          children: [
-            Container(
-              width: widthsize,
-              height: heightsize * 0.362,
-              decoration: const BoxDecoration(
-                borderRadius:
-                    BorderRadius.only(bottomLeft: Radius.circular(90)),
-                color: Color(0xFFFFD600),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Container(
-                    width: widthsize * 0.223,
-                    child: Column(
-                      children: [
-                        Text("name $idname"),
-                        Text("id $iduser")
-                      ],
-                    ),
+          child: Stack(
+        children: [
+          Container(
+            width: widthsize,
+            height: heightsize,
+            color: const Color(0xFF4A4A4A),
+            child: Column(
+              children: [
+                Container(
+                  width: widthsize,
+                  height: heightsize * 0.362,
+                  decoration: const BoxDecoration(
+                    borderRadius:
+                        BorderRadius.only(bottomLeft: Radius.circular(90)),
+                    color: Color(0xFFFFD600),
                   ),
-                  circlePoint(heightsize, widthsize),
-                  settingButton(heightsize, widthsize),
-                ],
-              ),
-            )
-          ],
-        ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      userinfo(heightsize, widthsize),
+                      circlePoint(heightsize, widthsize),
+                      settingButton(heightsize, widthsize),
+                    ],
+                  ),
+                )
+              ],
+            ),
+          ),
+          Positioned(
+              top: widthsize * 0.04,
+              left: widthsize * 0.04,
+              child: Column(
+                children: [Text("user: $idname\nid: $idAccount ")],
+              ))
+        ],
       )),
       bottomNavigationBar: BottomNavigationBar(
         type: BottomNavigationBarType.fixed,
@@ -98,15 +102,22 @@ class _MenuState extends State<Menu> {
           BottomNavigationBarItem(icon: Icon(Icons.qr_code), label: 'แสกน QR'),
         ],
         currentIndex: 0,
-        onTap: (index) {
+        onTap: (index) async {
           if (index != 0) {
-            Navigator.push(context,
+            await Navigator.push(context,
                 MaterialPageRoute(builder: (context) => widgetOptions[index]));
+            setState(() {
+              apigetpoint(token).then((value) => setState(() {
+                    pointid = value.point;
+                  }));
+            });
           }
         },
       ),
     );
   }
+
+  Widget userinfo(heightsize, widthsize) => SizedBox(width: widthsize * 0.223);
 
   Widget circlePoint(heightsize, widthsize) => Container(
       width: heightsize * 0.26,
@@ -131,7 +142,12 @@ class _MenuState extends State<Menu> {
             ),
             IconButton(
               icon: Icon(Icons.settings, size: widthsize * 0.043),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingShop()));
+              },
             ),
           ],
         ),

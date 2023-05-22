@@ -7,22 +7,27 @@ import 'package:zeencamp/menu/receipt.dart';
 import '../application/httpmenu.dart';
 import '../domain/pvd_data.dart';
 
-class TranFer extends StatefulWidget {
-  const TranFer({super.key});
+class TranFerQr extends StatefulWidget {
+  const TranFerQr({Key? key, required this.point, required this.idstore})
+      : super(key: key);
+  final int point;
+  final String idstore;
 
   @override
-  State<TranFer> createState() => _TranFerState();
+  State<TranFerQr> createState() => _TranFerQrState();
 }
 
-class _TranFerState extends State<TranFer> {
-  final _ctrlToID = TextEditingController();
-  final _ctrlAmount = TextEditingController();
+class _TranFerQrState extends State<TranFerQr> {
   late Future<Map<String, dynamic>> datapoint;
+  var point = 0;
   var pointid = 0;
   var token = "";
   var idAccount = "";
+  var idstore = "";
   @override
   void initState() {
+    idstore = widget.idstore;
+    point = widget.point;
     super.initState();
     token = context.read<AppData>().token;
     idAccount = context.read<AppData>().idAccount;
@@ -84,32 +89,31 @@ class _TranFerState extends State<TranFer> {
   }
 
   void btntranfer() {
-    if (int.parse(_ctrlAmount.text) < pointid) {
-      TranferService()
-          .apiTranfer(_ctrlToID.text, int.parse(_ctrlAmount.text), token)
-          .then((value) => {
-                if (value?.code == 200)
-                  {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Receipt(
-                                idAccount: idAccount,
-                                message: value!.message,
-                                state: value.state,
-                                payee: value.payee,
-                                date: value.date,
-                                point: value.point,
-                                balance: value.balance,
-                              )),
-                    )
-                  }
-                else
-                  {showAlertBox(context, 'แจ้งเตือน', 'ไม่มีไอดีนี้ในระบบ')}
-              });
-    } else {
-      showAlertBox(context, 'แจ้งเตือน', 'จำนวนเงินไม่เพียงพอ');
-    }
+    TranferService().apiTranfer(idstore, point, token).then((value) => {
+          if (value!.code == 200)
+            {
+              if (pointid < point)
+                {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Receipt(
+                              idAccount: idAccount,
+                              message: value.message,
+                              state: value.state,
+                              payee: value.payee,
+                              date: value.date,
+                              point: value.point,
+                              balance: value.balance,
+                            )),
+                  )
+                }
+              else
+                {showAlertBox(context, 'แจ้งเตือน', 'จำนวนเงินไม่เพียงพอ')}
+            }
+          else
+            {showAlertBox(context, 'แจ้งเตือน', 'ไม่มีไอดีนี้อยู่ในระบบ')}
+        });
   }
 
   Widget title(widthsize, heightsize) => SizedBox(
@@ -191,19 +195,23 @@ class _TranFerState extends State<TranFer> {
         ]),
       );
 
-  Widget fieldToID(widthsize, heightsize) => TextField(
-        controller: _ctrlToID,
-        decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            fillColor: const Color(0xFFD9D9D9),
-            filled: true),
+  Widget fieldToID(widthsize, heightsize) => Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: const Color(0xFFD9D9D9),
+        ),
+        height: heightsize * 0.075,
+        width: double.infinity,
+        child: Text(idstore),
       );
 
-  Widget fieldAmount(widthsize, heightsize) => TextField(
-        controller: _ctrlAmount,
-        decoration: InputDecoration(
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
-            fillColor: const Color(0xFFD9D9D9),
-            filled: true),
+  Widget fieldAmount(widthsize, heightsize) => Container(
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          color: const Color(0xFFD9D9D9),
+        ),
+        height: heightsize * 0.075,
+        width: double.infinity,
+        child: Text(point.toString()),
       );
 }

@@ -21,22 +21,25 @@ class _ShopMenuState extends State<ShopMenu> {
       fontSize: heightsize * 0.04,
       fontWeight: FontWeight.bold);
 
-   late Future<Map<String, dynamic>> datapoint;
-  var pointid;
-  var token;
-  var iduser;
-  var idname;
+  late Future<Map<String, dynamic>> datapoint;
+  var pointid = 0;
+  var token = "";
+  var iduser = "";
+  var idname = "";
   @override
   void initState() {
     super.initState();
     token = context.read<AppData>().token;
-    apigetpoint(token).then((value) => setState(() {
-          pointid = value.point;
-          iduser = value.id;
-          idname = value.name;
-          // print(value['point']);
-        }));
+    fetchpoint();
   }
+
+  void fetchpoint() => apigetpoint(token).then((value) => setState(() {
+        pointid = value.point;
+        iduser = value.id;
+        idname = value.name;
+        // print(value['point']);
+      }));
+
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
@@ -110,17 +113,23 @@ class _ShopMenuState extends State<ShopMenu> {
             ),
             IconButton(
               icon: Icon(Icons.settings, size: widthsize * 0.043),
-              onPressed: () {Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const SettingShop()));},
+              onPressed: () async {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const SettingShop()));
+                fetchpoint();
+              },
             ),
           ],
         ),
       );
 
   Widget buyPoint(widthsize, heightsize) => InkWell(
-        onTap: () {
-          Navigator.push(context,
+        onTap: () async {
+          await Navigator.push(context,
               MaterialPageRoute(builder: (context) => const BuyPoint()));
+          fetchpoint();
         },
         child: Container(
           decoration: const BoxDecoration(
@@ -144,8 +153,11 @@ class _ShopMenuState extends State<ShopMenu> {
       );
 
   Widget tranFer(widthsize, heightsize) => InkWell(
-        onTap: () => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const TranFer())),
+        onTap: () async {
+          await Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const TranFer()));
+          fetchpoint();
+        },
         child: Container(
             decoration: const BoxDecoration(
               borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -161,8 +173,10 @@ class _ShopMenuState extends State<ShopMenu> {
       );
 
   Widget createQR(widthsize, heightsize) => InkWell(
-        onTap: () {Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const QrGenerate()));},
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const QRScreen()));
+        },
         child: Container(
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),
@@ -176,8 +190,8 @@ class _ShopMenuState extends State<ShopMenu> {
       );
 
   Widget historyPoint(widthsize, heightsize) => InkWell(
-        onTap: () => Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const HistoryPoint())),
+        onTap: () => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const HistoryPoint())),
         child: Container(
           decoration: const BoxDecoration(
             borderRadius: BorderRadius.all(Radius.circular(15)),

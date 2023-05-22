@@ -26,7 +26,7 @@ class _SearchTypeState extends State<SearchType> {
           children: [
             Column(
               children: [
-                MyStyle().buildBackground(widthsize, heightsize,context),
+                MyStyle().buildBackground(widthsize, heightsize,context,"ร้านค้า"),
                 fieldSearchType(widthsize, heightsize),
                 GridView.count(
                   crossAxisSpacing: widthsize * 0.02,

@@ -5,10 +5,8 @@ import 'package:zeencamp/domain/allstore.dart';
 import 'package:zeencamp/domain/detailshopdm.dart';
 
 class StoresService {
-
-  var ipLogin = "10.32.69.1:5000";
+  var ipLogin = "18.141.143.217:17003";
   Future<List<Allstore>> getStores(token) async {
-
     final response = await http.get(
       Uri.parse('http://$ipLogin/api/v1/stores/get-all-stores'),
       headers: {
@@ -28,15 +26,13 @@ class StoresService {
     }
   }
 
-
-   Future<Customer> fetchStoreData(token,idshop) async {
+  Future<Customer> fetchStoreData(token, idshop) async {
     final response = await http.get(
-        Uri.parse(
-            'http://$ipLogin/api/v1/stores/get-detail-store?id=$idshop'),
+        Uri.parse('http://$ipLogin/api/v1/stores/get-detail-store?id=$idshop'),
         headers: {
-        'content-type': 'application/json',
-        HttpHeaders.authorizationHeader: 'Bearer $token',
-      });
+          'content-type': 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+        });
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonData = jsonDecode(response.body);

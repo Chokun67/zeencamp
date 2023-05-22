@@ -17,9 +17,9 @@ class HistoryPoint extends StatefulWidget {
 class _HistoryPointState extends State<HistoryPoint> {
   List<DepositModel> history = [];
   late Future<Map<String, dynamic>> datapoint;
-  var token;
-  var pointid;
-  var idAccount;
+  var token = "";
+  var pointid = 0;
+  var idAccount = "";
   @override
   void initState() {
     super.initState();
@@ -66,7 +66,7 @@ class _HistoryPointState extends State<HistoryPoint> {
                 Container(
                     color: const Color(0xFF4A4A4A),
                     width: widthsize,
-                    height: heightsize - heightsize * 0.284 - heightsize * 0.2,
+                    height: heightsize - heightsize * 0.284 - heightsize * 0.15,
                     child: historyPointTranfer(widthsize, heightsize, context)),
               ],
             ),
@@ -127,12 +127,12 @@ class _HistoryPointState extends State<HistoryPoint> {
                     Text("$pointid",
                         style: TextStyle(
                             color: const Color(0xFFFFD600),
-                            fontSize: heightsize * 0.06,
+                            fontSize: heightsize * 0.052,
                             fontWeight: FontWeight.bold)),
                     Text("P",
                         style: TextStyle(
                             color: const Color(0xFFFFD600),
-                            fontSize: heightsize * 0.06,
+                            fontSize: heightsize * 0.052,
                             fontWeight: FontWeight.bold))
                   ],
                 )

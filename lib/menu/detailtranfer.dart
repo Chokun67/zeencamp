@@ -18,7 +18,7 @@ class DetailTranfer extends StatelessWidget {
 
   TextStyle stylewhite(heightsize) => TextStyle(
       color: const Color(0xFFFFFFFF),
-      fontSize: heightsize * 0.025,
+      fontSize: heightsize * 0.022,
       fontWeight: FontWeight.w500);
   @override
   Widget build(BuildContext context) {

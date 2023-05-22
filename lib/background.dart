@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MyStyle {
-  SafeArea buildBackground(double widthsize, double heightsize,context) {
+  SafeArea buildBackground(double widthsize, double heightsize,context,String title) {
     return SafeArea(
       child: Stack(
         children: [
@@ -14,7 +14,7 @@ class MyStyle {
             ),
             child: Center(
                 child: Text(
-              "ร้านค้าต่างๆ",
+              title,
               style: TextStyle(
                   color: const Color(0xFf020202), fontSize: heightsize * 0.05),
             )),
@@ -82,4 +82,24 @@ class MyStyle {
         fontSize: heightsize * 0.05,
         fontWeight: FontWeight.bold);
   }
+}
+
+void showAlertBox(BuildContext context, String title, String content) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: <Widget>[
+          ElevatedButton(
+            child: const Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+        ],
+      );
+    },
+  );
 }

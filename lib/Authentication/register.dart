@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/accountService/accountservice.dart';
+import 'package:zeencamp/background.dart';
 // import 'package:zeencamp/application/httpregister.dart';
 import 'package:zeencamp/menu/menupage.dart';
 
@@ -14,6 +16,9 @@ class Registerpage extends StatefulWidget {
 }
 
 class _RegisterpageState extends State<Registerpage> {
+  final _formKey = GlobalKey<FormState>();
+  bool obscureText1 = true;
+  bool obscureText2 = true;
   final _ctrluser = TextEditingController();
   final _ctrlusername = TextEditingController();
   final _ctrlpswd = TextEditingController();
@@ -67,27 +72,30 @@ class _RegisterpageState extends State<Registerpage> {
             Text("Register",
                 style: TextStyle(
                     fontSize: heightsize * 0.03, fontWeight: FontWeight.bold)),
-            SizedBox(height: heightsize * 0.03),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                const Text("Email"),
-                textfielduser(heightsize, widthsize),
-                const Text("username"),
-                textfieldusername(heightsize, widthsize),
-                const Text("Password"),
-                textfieldpswd(heightsize, widthsize),
-                const Text("Confirm Password"),
-                textfieldconfirm(heightsize, widthsize),
-                Row(children: [
-                  const Statetest(),
-                  SizedBox(
-                    width: widthsize * 0.06,
-                  ),
-                  const Gender()
-                ]),
-                SizedBox(height: heightsize * 0.047),
-              ],
+            SizedBox(height: heightsize * 0.01),
+            Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text("Email"),
+                  textfielduser(heightsize, widthsize),
+                  const Text("username"),
+                  textfieldusername(heightsize, widthsize),
+                  const Text("Password"),
+                  textfieldpswd(heightsize, widthsize),
+                  const Text("Confirm Password"),
+                  textfieldconfirm(heightsize, widthsize),
+                  Row(children: [
+                    const Statetest(),
+                    SizedBox(
+                      width: widthsize * 0.06,
+                    ),
+                    const Gender()
+                  ]),
+                  SizedBox(height: heightsize * 0.005),
+                ],
+              ),
             ),
             loginButton(heightsize, widthsize, context),
             backToLogin(heightsize, widthsize, context),
@@ -97,57 +105,118 @@ class _RegisterpageState extends State<Registerpage> {
 
   Widget textfielduser(heightsize, widthsize) => SizedBox(
         width: widthsize * 0.72,
-        height: heightsize * 0.05,
-        child: TextField(
+        height: heightsize * 0.076,
+        child: TextFormField(
+          keyboardType: TextInputType.emailAddress,
           controller: _ctrluser,
+          style: TextStyle(fontSize: heightsize * 0.02),
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'กรุณาป้อนอีเมล';
+            } else if (value.length < 8) {
+              return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
+            }else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                .hasMatch(value)) {
+              return 'รูปแบบอีเมลไม่ถูกต้อง';
+            }
+            return null;
+          },
           decoration: const InputDecoration(
-              border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
-                  borderRadius: BorderRadius.all(Radius.zero)),
-              fillColor: Colors.white,
-              filled: true),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
+                borderRadius: BorderRadius.all(Radius.zero)),
+            fillColor: Color(0xFF4A4A4A),
+            filled: true,
+          ),
         ),
       );
 
-    Widget textfieldusername(heightsize, widthsize) => SizedBox(
+  Widget textfieldusername(heightsize, widthsize) => SizedBox(
         width: widthsize * 0.72,
-        height: heightsize * 0.05,
-        child: TextField(
+        height: heightsize * 0.076,
+        child: TextFormField(
           controller: _ctrlusername,
+          style: TextStyle(fontSize: heightsize * 0.02),
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'กรุณากรอกค่า';
+            }else if (value.length < 8) {
+              return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
+            }
+            return null;
+          },
           decoration: const InputDecoration(
-              border: OutlineInputBorder(
-                  borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
-                  borderRadius: BorderRadius.all(Radius.zero)),
-              fillColor: Colors.white,
-              filled: true),
+            border: OutlineInputBorder(
+                borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
+                borderRadius: BorderRadius.all(Radius.zero)),
+            fillColor: Color(0xFF4A4A4A),
+            filled: true,
+          ),
         ),
       );
 
   Widget textfieldpswd(heightsize, widthsize) => SizedBox(
         width: widthsize * 0.72,
-        height: heightsize * 0.05,
-        child: TextField(
+        height: heightsize * 0.076,
+        child: TextFormField(
+          obscureText: obscureText1,
+          style: TextStyle(fontSize: heightsize * 0.02),
           controller: _ctrlpswd,
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'กรุณากรอกค่า';
+            } else if (value.length < 8) {
+              return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
                   borderRadius: BorderRadius.all(Radius.zero)),
-              fillColor: Colors.white,
-              filled: true),
+              fillColor: const Color(0xFF4A4A4A),
+              filled: true,
+              suffixIcon: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      obscureText1 = !obscureText1;
+                    });
+                  },
+                  child: Icon(
+                      obscureText1 ? Icons.visibility : Icons.visibility_off))),
         ),
       );
 
   Widget textfieldconfirm(heightsize, widthsize) => SizedBox(
         width: widthsize * 0.72,
-        height: heightsize * 0.05,
-        child: TextField(
+        height: heightsize * 0.077,
+        child: TextFormField(
+          obscureText: obscureText2,
+          style: TextStyle(fontSize: heightsize * 0.02),
           controller: _ctrlconfirm,
-          decoration: const InputDecoration(
-              border: OutlineInputBorder(
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'กรุณากรอกค่า';
+            }
+            else if (value.length < 8) {
+              return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
+            }
+            return null;
+          },
+          decoration: InputDecoration(
+              border: const OutlineInputBorder(
                   borderSide: BorderSide(color: Color(0xFFAD6800), width: 1),
                   borderRadius: BorderRadius.all(Radius.zero)),
-              fillColor: Colors.white,
-              filled: true),
+              fillColor: const Color(0xFF4A4A4A),
+              filled: true,
+              suffixIcon: GestureDetector(
+                  onTap: () {
+                    setState(() {
+                      obscureText2 = !obscureText2;
+                    });
+                  },
+                  child: Icon(
+                      obscureText2 ? Icons.visibility : Icons.visibility_off))),
         ),
       );
 
@@ -171,30 +240,32 @@ class _RegisterpageState extends State<Registerpage> {
           ),
         ),
       );
-      
+
   void btnregister() {
-    if (_ctrlpswd.text == _ctrlconfirm.text) {
-      var datebirth =
-          '$dropdownValueday/$dropdownValuemounth/$dropdownValueyear';
-      // late Future<Map<String, dynamic>> futureLogin;
-      AccountService()
-          .apiRegister(
-              _ctrluser.text, _ctrlusername.text,_ctrlpswd.text, datebirth, dropdownValuegender)
-          .then((value) => {
-                if (value != null)
-                  {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Menu()),
-                    ),
-                    setState(() {
-                      context.read<AppData>().token = value.accessToken;
-                      context.read<AppData>().idAccount = value.idAccount;
-                    }),
-                  }
-              });
-    } else {
-      print("Error");
+    if (_formKey.currentState!.validate()) {
+      if (_ctrlpswd.text == _ctrlconfirm.text) {
+        var datebirth =
+            '$dropdownValueday/$dropdownValuemounth/$dropdownValueyear';
+        // late Future<Map<String, dynamic>> futureLogin;
+        AccountService()
+            .apiRegister(_ctrluser.text, _ctrlusername.text, _ctrlpswd.text,
+                datebirth.toString(), dropdownValuegender)
+            .then((value) => {
+                  if (value != null)
+                    {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Menu()),
+                      ),
+                      setState(() {
+                        context.read<AppData>().token = value.accessToken;
+                        context.read<AppData>().idAccount = value.idAccount;
+                      }),
+                    }
+                });
+      } else {
+        showAlertBox(context, 'แจ้งเตือน', 'โปรดตรวจสอบรหัสผ่าน');
+      }
     }
   }
 
@@ -202,7 +273,7 @@ class _RegisterpageState extends State<Registerpage> {
           double heightsize, double widthsize, BuildContext context) =>
       Container(
         width: widthsize * 0.68,
-        height: heightsize * 0.05,
+        height: heightsize * 0.04,
         decoration: const BoxDecoration(
           border: Border(
             bottom: BorderSide(color: Colors.black),

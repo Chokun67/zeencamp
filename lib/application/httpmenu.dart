@@ -10,7 +10,7 @@ import 'package:zeencamp/domain/userdm.dart';
 Future<UserModel> apigetpoint(String token) async {
 
   var response = await http.get(
-    Uri.parse('http://10.32.69.1:17003/api/v1/member/get-point'),
+    Uri.parse('http://18.141.143.217:17003/api/v1/member/get-point'),
     headers: {
       HttpHeaders.authorizationHeader: 'Bearer $token',
     },

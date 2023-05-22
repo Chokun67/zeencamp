@@ -1,21 +1,30 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
+import 'package:zeencamp/menu/tranferqr.dart';
 
 class QrScaner extends StatefulWidget {
+  const QrScaner({super.key});
+
   @override
-  _QrScanerState createState() => _QrScanerState();
+  State<QrScaner> createState() => _QrScanerState();
 }
 
 class _QrScanerState extends State<QrScaner> {
   final GlobalKey qrKey = GlobalKey(debugLabel: 'QR');
   QRViewController? controller;
-  String qrText = '';
+  String qrText = "";
+  int testint = 0;
+  String teststring = "";
+  late Map<String, dynamic> toTranfer = {};
+  bool isScanned = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('QR Code Scanner'),
+        title: const Text('QR Code Scanner'),backgroundColor: const Color(0xFFFFD600),foregroundColor: 
+        const Color(0xFF020202),
       ),
       body: Stack(
         children: [
@@ -38,7 +47,7 @@ class _QrScanerState extends State<QrScaner> {
               ),
             ),
           ),
-          Positioned(
+          const Positioned(
             bottom: 20.0,
             left: 0.0,
             right: 0.0,
@@ -59,7 +68,7 @@ class _QrScanerState extends State<QrScaner> {
             child: Center(
               child: Text(
                 'Result: $qrText',
-                style: TextStyle(
+                style: const TextStyle(
                   color: Colors.white,
                   fontSize: 16.0,
                 ),
@@ -75,10 +84,34 @@ class _QrScanerState extends State<QrScaner> {
     setState(() {
       this.controller = controller;
     });
-    controller.scannedDataStream.listen((scanData) {
-      setState(() {
-        qrText = scanData.code!;
-      });
+    controller.scannedDataStream.listen((scanData) async {
+      if (!isScanned) {
+        setState(() {
+          qrText = scanData.code!;
+          try {
+            toTranfer = jsonDecode(qrText);
+            if (toTranfer['point'] is! int || toTranfer['idstore'] is! String) {
+              isScanned = true;
+              _showErrorDialog('Invalid data types in QR Code');
+              return;
+            }            
+          } catch (e) {
+            isScanned = true;
+            _showErrorDialog('Invalid data types in QR Code');
+            return;
+          }
+          isScanned = true;
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => TranFerQr(
+                point: toTranfer['point'],
+                idstore: toTranfer['idstore']!,
+              ),
+            ),
+          );
+        });
+      }
     });
   }
 
@@ -86,5 +119,28 @@ class _QrScanerState extends State<QrScaner> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+  }
+
+  void _showErrorDialog(String message) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: const Text('Error'),
+          content: Text(message),
+          actions: [
+            TextButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+                setState(() {
+                  isScanned = false;
+                });
+              },
+            ),
+          ],
+        );
+      },
+    );
   }
 }

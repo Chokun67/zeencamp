@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/storeService/storeservice.dart';
 import 'package:zeencamp/background.dart';
-import 'package:zeencamp/menu/test.dart';
 
 import '../domain/allstore.dart';
 import '../domain/pvd_data.dart';
@@ -17,7 +16,7 @@ class SearchShop extends StatefulWidget {
 
 class _SearchShopState extends State<SearchShop> {
   List<Allstore> stores = [];
-  var token;
+  var token = "";
   @override
   initState() {
     super.initState();
@@ -31,7 +30,6 @@ class _SearchShopState extends State<SearchShop> {
     List<Allstore> fetchedStores = await StoresService().getStores(token);
     setState(() {
       stores = fetchedStores;
-      print(stores);
     });
   }
 
@@ -50,7 +48,7 @@ class _SearchShopState extends State<SearchShop> {
             children: [
               Column(
                 children: [
-                  MyStyle().buildBackground(widthsize, heightsize, context),
+                  MyStyle().buildBackground(widthsize, heightsize, context,"ร้านค้า"),
                   fieldSearchType(widthsize, heightsize),
                   Container(
                       color: const Color(0xFF4A4A4A),
