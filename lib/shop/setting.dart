@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:zeencamp/Authentication/login.dart';
 import 'package:zeencamp/background.dart';
 
 class SettingShop extends StatelessWidget {
@@ -22,7 +23,7 @@ class SettingShop extends StatelessWidget {
             Column(
               children: [
                 titleSetting(widthsize, heightsize),
-                deTail(widthsize, heightsize),
+                deTail(widthsize, heightsize,context),
               ],
             )
           ],
@@ -38,13 +39,13 @@ class SettingShop extends StatelessWidget {
         ),
       );
 
-  Widget deTail(widthsize, heightsize) => Container(
+  Widget deTail(widthsize, heightsize,context) => Container(
         padding: EdgeInsets.only(top: heightsize * 0.1),
         height: heightsize * 0.5,
         child: Column(children: [
           detailAccount(widthsize, heightsize),
           detailPolicy(widthsize, heightsize),
-          detailLogout(widthsize, heightsize)
+          detailLogout(widthsize, heightsize,context)
         ]),
       );
 
@@ -87,8 +88,12 @@ class SettingShop extends StatelessWidget {
         ),
   );
 
-  Widget detailLogout(widthsize, heightsize) => InkWell(
-    onTap: (){},
+  Widget detailLogout(widthsize, heightsize,context) => InkWell(
+    onTap: (){Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const Loginpage()),
+      (route) => false,
+    );},
     child: Container(
           padding: EdgeInsets.only(left: widthsize * 0.1),
           alignment: Alignment.centerLeft,

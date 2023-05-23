@@ -39,26 +39,28 @@ class _SearchShopState extends State<SearchShop> {
     final heightsize = MediaQuery.of(context).size.height;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SafeArea(
-        child: Container(
-          width: widthsize,
-          height: heightsize,
-          color: const Color(0xFF4A4A4A),
-          child: Stack(
-            children: [
-              Column(
-                children: [
-                  MyStyle().buildBackground(widthsize, heightsize, context,"ร้านค้า"),
-                  fieldSearchType(widthsize, heightsize),
-                  Container(
-                      color: const Color(0xFF4A4A4A),
-                      width: widthsize,
-                      height:
-                          heightsize - heightsize * 0.284 - heightsize * 0.15,
-                      child: shopName(widthsize, heightsize, context)),
-                ],
-              )
-            ],
+      body: SingleChildScrollView(
+        child: SafeArea(
+          child: Container(
+            width: widthsize,
+            height: heightsize,
+            color: const Color(0xFF4A4A4A),
+            child: Stack(
+              children: [
+                Column(
+                  children: [
+                    MyStyle().buildBackground(widthsize, heightsize, context,"ร้านค้า"),
+                    fieldSearchType(widthsize, heightsize),
+                    Container(
+                        color: const Color(0xFF4A4A4A),
+                        width: widthsize,
+                        height:
+                            heightsize - heightsize * 0.284 - heightsize * 0.15,
+                        child: shopName(widthsize, heightsize, context)),
+                  ],
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -107,7 +109,7 @@ class _SearchShopState extends State<SearchShop> {
                         color: Color(0xFFFFFFFF),
                       ),
                       margin: EdgeInsets.only(bottom: widthsize * 0.025),
-                      padding: EdgeInsets.all(widthsize * 0.05),
+                      padding: EdgeInsets.all(widthsize * 0.04),
                       // width: widthsize * 0.87,
                       height: heightsize * 0.13,
                       child: Column(
@@ -117,7 +119,7 @@ class _SearchShopState extends State<SearchShop> {
                             "ร้าน ${stores[index].name}",
                             style: TextStyle(
                                 color: const Color(0xFFEB3F3F),
-                                fontSize: heightsize * 0.035,
+                                fontSize: heightsize * 0.032,
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(

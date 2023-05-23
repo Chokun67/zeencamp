@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class DetailTranfer extends StatelessWidget {
   // const DetailTranfer({super.key});
@@ -124,7 +125,7 @@ class DetailTranfer extends StatelessWidget {
                         color: const Color(0xFFFFFFFF),
                         fontSize: heightsize * 0.025,
                         fontWeight: FontWeight.bold)),
-                Text(point.toString(),
+                Text(NumberFormat("#,##0").format(point),
                     style: TextStyle(
                         color: const Color(0xFFEB3F3F),
                         fontSize: heightsize * 0.03,
@@ -214,7 +215,7 @@ class DetailTranfer extends StatelessWidget {
                       style: stylewhite(heightsize),
                     ),
                     Text(
-                      point.toString(),
+                      NumberFormat("#,##0").format(point),
                       style: stylewhite(heightsize),
                     )
                   ]),

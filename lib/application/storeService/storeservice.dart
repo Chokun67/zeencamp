@@ -35,13 +35,13 @@ class StoresService {
         });
 
     if (response.statusCode == 200) {
-      final Map<String, dynamic> jsonData = jsonDecode(response.body);
+      var decodeutf8 = utf8.decode(response.bodyBytes);
+      final Map<String, dynamic> jsonData = jsonDecode(decodeutf8);
       final storeData = Customer(
         storePicture: jsonData['storePicture'],
         menuStores: List<Store>.from(
             jsonData['menuStores'].map((x) => Store.fromJson(x))),
       );
-
       return storeData;
     } else {
       throw Exception(

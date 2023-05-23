@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class Receipt extends StatelessWidget {
   // const Receipt({super.key});
@@ -146,7 +147,7 @@ class Receipt extends StatelessWidget {
                         color: const Color(0xFFFFFFFF),
                         fontSize: heightsize * 0.025,
                         fontWeight: FontWeight.bold)),
-                Text(balance.toString(),
+                Text(NumberFormat("#,##0").format(balance),
                     style: TextStyle(
                         color: const Color(0xFF2CC14D),
                         fontSize: heightsize * 0.03,
@@ -235,7 +236,7 @@ class Receipt extends StatelessWidget {
                       style: stylewhite(heightsize),
                     ),
                     Text(
-                      point.toString(),
+                      NumberFormat("#,##0").format(point),
                       style: stylewhite(heightsize),
                     )
                   ]),

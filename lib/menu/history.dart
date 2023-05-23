@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/httpmenu.dart';
 import 'package:zeencamp/application/tranferService/tranferservice.dart';
@@ -66,7 +67,7 @@ class _HistoryPointState extends State<HistoryPoint> {
                 Container(
                     color: const Color(0xFF4A4A4A),
                     width: widthsize,
-                    height: heightsize - heightsize * 0.284 - heightsize * 0.15,
+                    height: heightsize - heightsize * 0.284 - heightsize * 0.16,
                     child: historyPointTranfer(widthsize, heightsize, context)),
               ],
             ),
@@ -85,7 +86,7 @@ class _HistoryPointState extends State<HistoryPoint> {
               bottom: 0,
               child: Container(
                 width: widthsize,
-                height: heightsize * 0.03,
+                height: heightsize * 0.05,
                 color: const Color(0xFF4A4A4A),
               ))
         ],
@@ -124,7 +125,7 @@ class _HistoryPointState extends State<HistoryPoint> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text("$pointid",
+                    Text(NumberFormat("#,##0").format(pointid),
                         style: TextStyle(
                             color: const Color(0xFFFFD600),
                             fontSize: heightsize * 0.052,
@@ -216,8 +217,8 @@ class _HistoryPointState extends State<HistoryPoint> {
                       ),
                       Text(
                         isDeposit(history, index)
-                            ? "+${history[index].point}"
-                            : "${history[index].point}",
+                            ? "+${NumberFormat("#,##0").format(history[index].point)}"
+                            : NumberFormat("#,##0").format(history[index].point),
                         style: TextStyle(
                             color: isDeposit(history, index)
                                 ? const Color(0xFF2CC14D)

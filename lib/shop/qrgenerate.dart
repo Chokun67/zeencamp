@@ -14,6 +14,7 @@ class QRScreen extends StatefulWidget {
 class _QRScreenState extends State<QRScreen> {
   late String token;
   late String dataInput;
+  late String idAccount;
 
   @override
   void initState() {
@@ -25,6 +26,7 @@ class _QRScreenState extends State<QRScreen> {
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
     final widthsize = MediaQuery.of(context).size.width;
+    idAccount = context.read<AppData>().idAccount;
     token = context.read<AppData>().token;
     return Scaffold(
       backgroundColor: AppStyle.primaryColor,
@@ -35,17 +37,17 @@ class _QRScreenState extends State<QRScreen> {
           children: [
             Center(
               child: QrImageView(
-                data: "{point :$dataInput,idstore : '123'}",
+                data: "{\"point\" :$dataInput,\"idstore\" : \"$idAccount\"}",
                 backgroundColor: Colors.white,
                 version: QrVersions.auto,
-                size: heightsize*0.35,
+                size: heightsize * 0.35,
               ),
             ),
             SizedBox(
-              height: heightsize*0.02,
+              height: heightsize * 0.02,
             ),
             SizedBox(
-              width: widthsize*0.77,
+              width: widthsize * 0.77,
               child: TextField(
                 keyboardType: TextInputType.number,
                 onChanged: (value) {

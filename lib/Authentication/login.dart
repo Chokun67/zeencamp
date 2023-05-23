@@ -202,6 +202,7 @@ class _LoginpageState extends State<Loginpage> {
                     MaterialPageRoute(builder: (context) => const ShopMenu()),
                   ),
                   context.read<AppData>().token = value.accessToken,
+                  context.read<AppData>().idAccount = value.idAccount,
                 }
             }
           else

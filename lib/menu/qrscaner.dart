@@ -101,7 +101,7 @@ class _QrScanerState extends State<QrScaner> {
             return;
           }
           isScanned = true;
-          Navigator.push(
+          Navigator.pushReplacement(
             context,
             MaterialPageRoute(
               builder: (context) => TranFerQr(

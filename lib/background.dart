@@ -46,7 +46,7 @@ class MyStyle {
               ),
               Container(
                 width: widthsize,
-                height: heightsize - heightsize * 0.225,
+                height: heightsize - heightsize * 0.233,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(90)),
                   color: Color(0xFF4A4A4A),
@@ -69,7 +69,7 @@ class MyStyle {
             bottom: 0,
             child: Container(
               width: widthsize,
-              height: heightsize * 0.01,
+              height: heightsize * 0.032,
               color: const Color(0xFF4A4A4A),
             ))
       ],

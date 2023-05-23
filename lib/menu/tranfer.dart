@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/tranferService/tranferservice.dart';
 import 'package:zeencamp/background.dart';
@@ -162,7 +163,7 @@ class _TranFerState extends State<TranFer> {
                 SizedBox(
                   height: heightsize * 0.04,
                 ),
-                Text("$pointid Point",
+                Text("${NumberFormat("#,##0").format(pointid)} Point",
                     style: TextStyle(
                         color: const Color(0xFFFFFFFF),
                         fontSize: heightsize * 0.05,

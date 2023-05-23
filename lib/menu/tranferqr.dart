@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/tranferService/tranferservice.dart';
 import 'package:zeencamp/background.dart';
@@ -89,31 +90,30 @@ class _TranFerQrState extends State<TranFerQr> {
   }
 
   void btntranfer() {
-    TranferService().apiTranfer(idstore, point, token).then((value) => {
-          if (value!.code == 200)
-            {
-              if (pointid < point)
-                {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => Receipt(
-                              idAccount: idAccount,
-                              message: value.message,
-                              state: value.state,
-                              payee: value.payee,
-                              date: value.date,
-                              point: value.point,
-                              balance: value.balance,
-                            )),
-                  )
-                }
-              else
-                {showAlertBox(context, 'แจ้งเตือน', 'จำนวนเงินไม่เพียงพอ')}
-            }
-          else
-            {showAlertBox(context, 'แจ้งเตือน', 'ไม่มีไอดีนี้อยู่ในระบบ')}
-        });
+    if (pointid > point) {
+      TranferService().apiTranfer(idstore, point, token).then((value) => {
+            if (value!.code == 200)
+              {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Receipt(
+                            idAccount: idAccount,
+                            message: value.message,
+                            state: value.state,
+                            payee: value.payee,
+                            date: value.date,
+                            point: value.point,
+                            balance: value.balance,
+                          )),
+                )
+              }
+            else
+              {showAlertBox(context, 'แจ้งเตือน', 'ไม่มีไอดีนี้อยู่ในระบบ')}
+          });
+    } else {
+      showAlertBox(context, 'แจ้งเตือน', 'จำนวนเงินไม่เพียงพอ');
+    }
   }
 
   Widget title(widthsize, heightsize) => SizedBox(
@@ -195,23 +195,21 @@ class _TranFerQrState extends State<TranFerQr> {
         ]),
       );
 
-  Widget fieldToID(widthsize, heightsize) => Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: const Color(0xFFD9D9D9),
-        ),
-        height: heightsize * 0.075,
-        width: double.infinity,
-        child: Text(idstore),
+  Widget fieldToID(widthsize, heightsize) => TextField(
+        readOnly: true,
+        decoration: InputDecoration(
+            hintText: idstore,
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            fillColor: const Color(0xFFD9D9D9),
+            filled: true),
       );
 
-  Widget fieldAmount(widthsize, heightsize) => Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          color: const Color(0xFFD9D9D9),
-        ),
-        height: heightsize * 0.075,
-        width: double.infinity,
-        child: Text(point.toString()),
+  Widget fieldAmount(widthsize, heightsize) => TextField(
+        readOnly: true,
+        decoration: InputDecoration(
+            hintText: NumberFormat("#,##0").format(point),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+            fillColor: const Color(0xFFD9D9D9),
+            filled: true),
       );
 }

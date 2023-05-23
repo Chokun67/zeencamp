@@ -17,7 +17,7 @@ class AccountService {
     if (response.statusCode == 200) {
       return Customer.fromJson(jsonDecode(response.body));
     } else {
-      print(response.statusCode);
+      // print(response.statusCode);
       return null;
     }
   }

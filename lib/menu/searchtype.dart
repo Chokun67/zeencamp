@@ -17,35 +17,37 @@ class _SearchTypeState extends State<SearchType> {
     final heightsize = MediaQuery.of(context).size.height;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
-      body: SafeArea(
-          child: Container(
-        width: widthsize,
-        height: heightsize,
-        color: const Color(0xFF4A4A4A),
-        child: Stack(
-          children: [
-            Column(
-              children: [
-                MyStyle().buildBackground(widthsize, heightsize,context,"ร้านค้า"),
-                fieldSearchType(widthsize, heightsize),
-                GridView.count(
-                  crossAxisSpacing: widthsize * 0.02,
-                  mainAxisSpacing: widthsize * 0.04,
-                  crossAxisCount: 2,
-                  childAspectRatio: 1.2,
-                  shrinkWrap: true,
-                  padding: EdgeInsets.all(widthsize * 0.05),
-                  children: [
-                    typeFood(widthsize),
-                    typeDrink(widthsize),
-                    typeSweets(widthsize)
-                  ],
-                )
-              ],
-            ),
-          ],
-        ),
-      )),
+      body: SingleChildScrollView(
+        child: SafeArea(
+            child: Container(
+          width: widthsize,
+          height: heightsize,
+          color: const Color(0xFF4A4A4A),
+          child: Stack(
+            children: [
+              Column(
+                children: [
+                  MyStyle().buildBackground(widthsize, heightsize,context,"ร้านค้า"),
+                  fieldSearchType(widthsize, heightsize),
+                  GridView.count(
+                    crossAxisSpacing: widthsize * 0.02,
+                    mainAxisSpacing: widthsize * 0.04,
+                    crossAxisCount: 2,
+                    childAspectRatio: 1.2,
+                    shrinkWrap: true,
+                    padding: EdgeInsets.all(widthsize * 0.05),
+                    children: [
+                      typeFood(widthsize),
+                      typeDrink(widthsize),
+                      typeSweets(widthsize)
+                    ],
+                  )
+                ],
+              ),
+            ],
+          ),
+        )),
+      ),
     );
   }
 
@@ -117,6 +119,4 @@ class _SearchTypeState extends State<SearchType> {
           ),
         ),
       );
-
-
 }

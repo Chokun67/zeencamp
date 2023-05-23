@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:zeencamp/application/httpmenu.dart';
 import 'package:zeencamp/menu/history.dart';
 import 'package:zeencamp/menu/qrscaner.dart';
@@ -127,7 +128,7 @@ class _MenuState extends State<Menu> {
           shape: BoxShape.circle,
           border: Border.all(color: const Color(0xFFFF9900), width: 5)),
       child: Center(
-          child: Text('$pointid \nPoint',
+          child: Text('${NumberFormat("#,##0").format(pointid)} \nPoint',
               style: TextStyle(
                   fontSize: heightsize * 0.05, fontWeight: FontWeight.bold))));
 

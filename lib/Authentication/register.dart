@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/accountService/accountservice.dart';
 import 'package:zeencamp/background.dart';
@@ -62,7 +61,7 @@ class _RegisterpageState extends State<Registerpage> {
                 width: 7,
                 style: BorderStyle.solid),
             color: const Color(0xFFFFD600)),
-        height: heightsize * 0.7,
+        height: heightsize * 0.72,
         width: widthsize * 0.8,
         padding: const EdgeInsets.all(20),
         child: Column(
@@ -105,7 +104,7 @@ class _RegisterpageState extends State<Registerpage> {
 
   Widget textfielduser(heightsize, widthsize) => SizedBox(
         width: widthsize * 0.72,
-        height: heightsize * 0.076,
+        height: heightsize * 0.075,
         child: TextFormField(
           keyboardType: TextInputType.emailAddress,
           controller: _ctrluser,
@@ -133,7 +132,7 @@ class _RegisterpageState extends State<Registerpage> {
 
   Widget textfieldusername(heightsize, widthsize) => SizedBox(
         width: widthsize * 0.72,
-        height: heightsize * 0.076,
+        height: heightsize * 0.075,
         child: TextFormField(
           controller: _ctrlusername,
           style: TextStyle(fontSize: heightsize * 0.02),
@@ -157,7 +156,7 @@ class _RegisterpageState extends State<Registerpage> {
 
   Widget textfieldpswd(heightsize, widthsize) => SizedBox(
         width: widthsize * 0.72,
-        height: heightsize * 0.076,
+        height: heightsize * 0.075,
         child: TextFormField(
           obscureText: obscureText1,
           style: TextStyle(fontSize: heightsize * 0.02),
@@ -189,7 +188,7 @@ class _RegisterpageState extends State<Registerpage> {
 
   Widget textfieldconfirm(heightsize, widthsize) => SizedBox(
         width: widthsize * 0.72,
-        height: heightsize * 0.077,
+        height: heightsize * 0.075,
         child: TextFormField(
           obscureText: obscureText2,
           style: TextStyle(fontSize: heightsize * 0.02),

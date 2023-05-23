@@ -45,7 +45,7 @@ class Shopdetail extends StatelessWidget {
                     height: heightsize * 0.45,
                     decoration: const BoxDecoration(color: Colors.amber),
                     child: Image.network(
-                      'http://10.32.69.1:5000/api/v1/image/${customerData.storePicture}',
+                      'http://18.141.143.217:17003/api/v1/image/${customerData.storePicture}',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -174,8 +174,7 @@ class Shopdetail extends StatelessWidget {
           children: List.generate(menuStores?.length ?? 0, (index) {
             final menuStore = menuStores?[index];
             return Container(
-              margin: EdgeInsets.only(bottom: heightsize * 0.01),
-              color: Colors.amber,
+              margin: EdgeInsets.only(bottom: heightsize * 0.01,left: widthsize*0.02),
               height: heightsize * 0.12,
               child: Row(
                 children: [
@@ -208,7 +207,7 @@ class Shopdetail extends StatelessWidget {
         border: Border.all(color: const Color(0xFF000000), width: 4),
       ),
       child: Image.network(
-        'http://10.32.69.1:5000/api/v1/image/$pictures',
+        'http://18.141.143.217:17003/api/v1/image/$pictures',
         fit: BoxFit.cover,
         // ปรับขนาดภาพให้พอดีกับขนาด Container
       ),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/httpmenu.dart';
 import 'package:zeencamp/domain/pvd_data.dart';
@@ -26,10 +27,12 @@ class _ShopMenuState extends State<ShopMenu> {
   var token = "";
   var iduser = "";
   var idname = "";
+   var idAccount = "";
   @override
   void initState() {
     super.initState();
     token = context.read<AppData>().token;
+    idAccount = context.read<AppData>().idAccount;
     fetchpoint();
   }
 
@@ -46,47 +49,56 @@ class _ShopMenuState extends State<ShopMenu> {
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
-          child: Container(
+          child: Stack(
+            children: [
+              Container(
         width: widthsize,
         height: heightsize,
         color: const Color(0xFF4A4A4A),
         child: Column(
-          children: [
-            Container(
-              width: widthsize,
-              height: heightsize * 0.362,
-              decoration: const BoxDecoration(
-                borderRadius:
-                    BorderRadius.only(bottomLeft: Radius.circular(90)),
-                color: Color(0xFFFFD600),
-              ),
-              child: Row(
-                children: [
-                  Container(
-                    width: widthsize * 0.223,
+              children: [
+                Container(
+                  width: widthsize,
+                  height: heightsize * 0.362,
+                  decoration: const BoxDecoration(
+                    borderRadius:
+                        BorderRadius.only(bottomLeft: Radius.circular(90)),
+                    color: Color(0xFFFFD600),
                   ),
-                  circlePoint(heightsize, widthsize),
-                  settingButton(heightsize, widthsize),
-                ],
-              ),
-            ),
-            Padding(
-              padding: EdgeInsets.all(widthsize * 0.1),
-              child: Column(
-                children: [
-                  buyPoint(widthsize, heightsize),
-                  SizedBox(height: heightsize * 0.04),
-                  tranFer(widthsize, heightsize),
-                  SizedBox(height: heightsize * 0.04),
-                  createQR(widthsize, heightsize),
-                  SizedBox(height: heightsize * 0.04),
-                  historyPoint(widthsize, heightsize)
-                ],
-              ),
-            ),
-          ],
+                  child: Row(
+                    children: [
+                      Container(
+                        width: widthsize * 0.223,
+                      ),
+                      circlePoint(heightsize, widthsize),
+                      settingButton(heightsize, widthsize),
+                    ],
+                  ),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(widthsize * 0.1),
+                  child: Column(
+                    children: [
+                      buyPoint(widthsize, heightsize),
+                      SizedBox(height: heightsize * 0.04),
+                      tranFer(widthsize, heightsize),
+                      SizedBox(height: heightsize * 0.04),
+                      createQR(widthsize, heightsize),
+                      SizedBox(height: heightsize * 0.04),
+                      historyPoint(widthsize, heightsize)
+                    ],
+                  ),
+                ),
+              ],
         ),
-      )),
+      ),Positioned(
+              top: widthsize * 0.04,
+              left: widthsize * 0.04,
+              child: Column(
+                children: [Text("user: $idname\nid: $idAccount ")],
+              ))
+            ],
+          )),
     );
   }
 
@@ -98,7 +110,7 @@ class _ShopMenuState extends State<ShopMenu> {
           shape: BoxShape.circle,
           border: Border.all(color: const Color(0xFFFF9900), width: 5)),
       child: Center(
-          child: Text('$pointid \nPoint',
+          child: Text('${NumberFormat("#,##0").format(pointid)} \nPoint',
               style: TextStyle(
                   fontSize: heightsize * 0.05, fontWeight: FontWeight.bold))));
 
