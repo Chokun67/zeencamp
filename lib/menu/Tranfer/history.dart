@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
-import 'package:zeencamp/application/httpmenu.dart';
+import 'package:zeencamp/application/accountService/httpmenu.dart';
 import 'package:zeencamp/application/tranferService/tranferservice.dart';
 import 'package:zeencamp/domain/historydm.dart';
-import 'package:zeencamp/menu/detailtranfer.dart';
-
-import '../domain/pvd_data.dart';
+import 'package:zeencamp/menu/Tranfer/detailtranfer.dart';
+import '../../domain/pvd_data.dart';
+import '../../securestorage.dart';
 
 class HistoryPoint extends StatefulWidget {
   const HistoryPoint({super.key});
@@ -24,12 +24,19 @@ class _HistoryPointState extends State<HistoryPoint> {
   @override
   void initState() {
     super.initState();
-    idAccount = context.read<AppData>().idAccount;
-    token = context.read<AppData>().token;
-    apigetpoint(token).then((value) => setState(() {
-          pointid = value.point;
-        }));
-    fetchData();
+    // idAccount = context.read<AppData>().idAccount;
+    // token = context.read<AppData>().token;
+    getData().then((_) {
+      apigetpoint(token).then((value) => setState(() {
+            pointid = value.point;
+          }));
+      fetchData();
+    });
+  }
+
+  Future<void> getData() async {
+    token = await SecureStorage().read("token") as String;
+    idAccount = await SecureStorage().read("idAccount") as String;
   }
 
   void fetchData() async {
@@ -67,7 +74,7 @@ class _HistoryPointState extends State<HistoryPoint> {
                 Container(
                     color: const Color(0xFF4A4A4A),
                     width: widthsize,
-                    height: heightsize - heightsize * 0.284 - heightsize * 0.16,
+                    height: heightsize - heightsize * 0.284 - heightsize * 0.18,
                     child: historyPointTranfer(widthsize, heightsize, context)),
               ],
             ),
@@ -173,6 +180,7 @@ class _HistoryPointState extends State<HistoryPoint> {
             physics: const ScrollPhysics(parent: null),
             shrinkWrap: true,
             itemBuilder: (BuildContext buildList, int index) {
+              history.sort((a, b) => b.date.compareTo(a.date));
               return InkWell(
                 onTap: () {
                   Navigator.push(
@@ -218,7 +226,8 @@ class _HistoryPointState extends State<HistoryPoint> {
                       Text(
                         isDeposit(history, index)
                             ? "+${NumberFormat("#,##0").format(history[index].point)}"
-                            : NumberFormat("#,##0").format(history[index].point),
+                            : NumberFormat("#,##0")
+                                .format(history[index].point),
                         style: TextStyle(
                             color: isDeposit(history, index)
                                 ? const Color(0xFF2CC14D)

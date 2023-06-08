@@ -3,27 +3,32 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/tranferService/tranferservice.dart';
 import 'package:zeencamp/background.dart';
-import 'package:zeencamp/menu/receipt.dart';
+import 'package:zeencamp/menu/Tranfer/receipt.dart';
 
-import '../application/httpmenu.dart';
-import '../domain/pvd_data.dart';
+import '../../application/accountService/httpmenu.dart';
+import '../../domain/pvd_data.dart';
 
-class TranFer extends StatefulWidget {
-  const TranFer({super.key});
+class TranFerQr extends StatefulWidget {
+  const TranFerQr({Key? key, required this.point, required this.idstore})
+      : super(key: key);
+  final int point;
+  final String idstore;
 
   @override
-  State<TranFer> createState() => _TranFerState();
+  State<TranFerQr> createState() => _TranFerQrState();
 }
 
-class _TranFerState extends State<TranFer> {
-  final _ctrlToID = TextEditingController();
-  final _ctrlAmount = TextEditingController();
+class _TranFerQrState extends State<TranFerQr> {
   late Future<Map<String, dynamic>> datapoint;
+  var point = 0;
   var pointid = 0;
   var token = "";
   var idAccount = "";
+  var idstore = "";
   @override
   void initState() {
+    idstore = widget.idstore;
+    point = widget.point;
     super.initState();
     token = context.read<AppData>().token;
     idAccount = context.read<AppData>().idAccount;
@@ -76,7 +81,10 @@ class _TranFerState extends State<TranFer> {
                 bottom: widthsize * 0.2,
                 right: widthsize * 0.045,
                 child: InkWell(
-                    onTap: btntranfer,
+                    onTap: () {
+                      showAlertDecide(context,
+                          title: 'ยืนยันการโอนบัญชี', content: 'โอนไปยัง $idAccount', okAction: btntranfer);
+                    },
                     child: Image.asset('images/correct.png'))),
           ],
         )),
@@ -85,29 +93,27 @@ class _TranFerState extends State<TranFer> {
   }
 
   void btntranfer() {
-    if (int.parse(_ctrlAmount.text) < pointid) {
-      TranferService()
-          .apiTranfer(_ctrlToID.text, int.parse(_ctrlAmount.text), token)
-          .then((value) => {
-                if (value?.code == 200)
-                  {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => Receipt(
-                                idAccount: idAccount,
-                                message: value!.message,
-                                state: value.state,
-                                payee: value.payee,
-                                date: value.date,
-                                point: value.point,
-                                balance: value.balance,
-                              )),
-                    )
-                  }
-                else
-                  {showAlertBox(context, 'แจ้งเตือน', 'ไม่มีไอดีนี้ในระบบ')}
-              });
+    if (pointid > point) {
+      TranferService().apiTranfer(idstore, point, token).then((value) => {
+            if (value!.code == 200)
+              {
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => Receipt(
+                            idAccount: idAccount,
+                            message: value.message,
+                            state: value.state,
+                            payee: value.payee,
+                            date: value.date,
+                            point: value.point,
+                            balance: value.balance,
+                          )),
+                )
+              }
+            else
+              {showAlertBox(context, 'แจ้งเตือน', 'ไม่มีไอดีนี้อยู่ในระบบ')}
+          });
     } else {
       showAlertBox(context, 'แจ้งเตือน', 'จำนวนเงินไม่เพียงพอ');
     }
@@ -163,7 +169,7 @@ class _TranFerState extends State<TranFer> {
                 SizedBox(
                   height: heightsize * 0.04,
                 ),
-                Text("${NumberFormat("#,##0").format(pointid)} Point",
+                Text("$pointid Point",
                     style: TextStyle(
                         color: const Color(0xFFFFFFFF),
                         fontSize: heightsize * 0.05,
@@ -193,16 +199,18 @@ class _TranFerState extends State<TranFer> {
       );
 
   Widget fieldToID(widthsize, heightsize) => TextField(
-        controller: _ctrlToID,
+        readOnly: true,
         decoration: InputDecoration(
+            hintText: idstore,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             fillColor: const Color(0xFFD9D9D9),
             filled: true),
       );
 
   Widget fieldAmount(widthsize, heightsize) => TextField(
-        controller: _ctrlAmount,
+        readOnly: true,
         decoration: InputDecoration(
+            hintText: NumberFormat("#,##0").format(point),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             fillColor: const Color(0xFFD9D9D9),
             filled: true),

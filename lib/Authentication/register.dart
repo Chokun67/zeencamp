@@ -6,6 +6,7 @@ import 'package:zeencamp/background.dart';
 import 'package:zeencamp/menu/menupage.dart';
 
 import '../domain/pvd_data.dart';
+import '../securestorage.dart';
 
 class Registerpage extends StatefulWidget {
   const Registerpage({super.key});
@@ -22,6 +23,7 @@ class _RegisterpageState extends State<Registerpage> {
   final _ctrlusername = TextEditingController();
   final _ctrlpswd = TextEditingController();
   final _ctrlconfirm = TextEditingController();
+  DateTime selectedDate = DateTime.now();
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
@@ -86,7 +88,7 @@ class _RegisterpageState extends State<Registerpage> {
                   const Text("Confirm Password"),
                   textfieldconfirm(heightsize, widthsize),
                   Row(children: [
-                    const Statetest(),
+                    dateSelect(heightsize, widthsize, context),
                     SizedBox(
                       width: widthsize * 0.06,
                     ),
@@ -114,7 +116,7 @@ class _RegisterpageState extends State<Registerpage> {
               return 'กรุณาป้อนอีเมล';
             } else if (value.length < 8) {
               return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
-            }else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+            } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
                 .hasMatch(value)) {
               return 'รูปแบบอีเมลไม่ถูกต้อง';
             }
@@ -139,7 +141,7 @@ class _RegisterpageState extends State<Registerpage> {
           validator: (value) {
             if (value!.isEmpty) {
               return 'กรุณากรอกค่า';
-            }else if (value.length < 8) {
+            } else if (value.length < 8) {
               return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
             }
             return null;
@@ -196,8 +198,7 @@ class _RegisterpageState extends State<Registerpage> {
           validator: (value) {
             if (value!.isEmpty) {
               return 'กรุณากรอกค่า';
-            }
-            else if (value.length < 8) {
+            } else if (value.length < 8) {
               return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
             }
             return null;
@@ -243,23 +244,20 @@ class _RegisterpageState extends State<Registerpage> {
   void btnregister() {
     if (_formKey.currentState!.validate()) {
       if (_ctrlpswd.text == _ctrlconfirm.text) {
-        var datebirth =
-            '$dropdownValueday/$dropdownValuemounth/$dropdownValueyear';
-        // late Future<Map<String, dynamic>> futureLogin;
         AccountService()
             .apiRegister(_ctrluser.text, _ctrlusername.text, _ctrlpswd.text,
-                datebirth.toString(), dropdownValuegender)
+                selectedDate.toString(), dropdownValuegender)
             .then((value) => {
                   if (value != null)
                     {
-                      Navigator.push(
+                      Navigator.pushReplacement(
                         context,
                         MaterialPageRoute(builder: (context) => const Menu()),
                       ),
-                      setState(() {
-                        context.read<AppData>().token = value.accessToken;
-                        context.read<AppData>().idAccount = value.idAccount;
-                      }),
+                    SecureStorage().write('token', value.accessToken),
+                    SecureStorage().write('idAccount', value.idAccount),
+                    context.read<AppData>().token = value.accessToken,
+                    context.read<AppData>().idAccount = value.idAccount,
                     }
                 });
       } else {
@@ -296,98 +294,30 @@ class _RegisterpageState extends State<Registerpage> {
           ],
         ),
       );
+
+  Widget dateSelect(heightsize, widthsize, context) =>
+      Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        const Text("Select birthday"),
+        ElevatedButton(
+            onPressed: () async {
+              final DateTime? dateTime = await showDatePicker(
+                  context: context,
+                  initialDate: selectedDate,
+                  firstDate: DateTime(1940),
+                  lastDate: DateTime.now());
+              if (dateTime != null) {
+                setState(() {
+                  selectedDate = dateTime;
+                });
+              }
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4A4A4A),
+              ),
+            child: const Text("choose Date"),
+            )
+      ]);
 } // จุดสิ้นสุด stateful
-
-List<String> listday = <String>[];
-List<String> listmounth = <String>[];
-List<String> listyear = <String>[];
-
-String dropdownValueday = listday.first;
-String dropdownValuemounth = listmounth.first;
-String dropdownValueyear = listyear.first;
-
-class Statetest extends StatefulWidget {
-  const Statetest({super.key});
-
-  @override
-  State<Statetest> createState() => _StatetestState();
-}
-
-class _StatetestState extends State<Statetest> {
-  @override
-  Widget build(BuildContext context) {
-    if (listday.isEmpty) {
-      for (int i = 0; i < 31; i++) {
-        listday.add("${i + 1}");
-      }
-      for (int i = 0; i < 12; i++) {
-        listmounth.add("${i + 1}");
-      }
-      for (int i = 1973; i < 2023; i++) {
-        listyear.add("${i + 1}");
-      }
-    }
-    final heightsize = MediaQuery.of(context).size.height;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text("DD/MM/YYYY"),
-        Row(
-          children: [
-            DropdownButton<String>(
-              value: dropdownValueday,
-              elevation: (heightsize * 32).toInt(),
-              onChanged: (String? value) {
-                // This is called when the user selects an item.
-                setState(() {
-                  dropdownValueday = value!;
-                });
-              },
-              items: listday.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            DropdownButton<String>(
-              value: dropdownValuemounth,
-              elevation: (heightsize * 32).toInt(),
-              onChanged: (String? value) {
-                // This is called when the user selects an item.
-                setState(() {
-                  dropdownValuemounth = value!;
-                });
-              },
-              items: listmounth.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-            DropdownButton<String>(
-              value: dropdownValueyear,
-              elevation: (heightsize * 32).toInt(),
-              onChanged: (String? value) {
-                // This is called when the user selects an item.
-                setState(() {
-                  dropdownValueyear = value!;
-                });
-              },
-              items: listyear.map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
-            ),
-          ],
-        )
-      ],
-    );
-  }
-}
 
 List<String> listgender = <String>['ชาย', 'หญิง', 'อื่นๆ'];
 String dropdownValuegender = listgender.first;

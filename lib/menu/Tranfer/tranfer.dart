@@ -1,40 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:zeencamp/application/tranferService/tranferservice.dart';
 import 'package:zeencamp/background.dart';
-import 'package:zeencamp/menu/receipt.dart';
+import 'package:zeencamp/menu/Tranfer/receipt.dart';
 
-import '../application/httpmenu.dart';
-import '../domain/pvd_data.dart';
+import '../../application/accountService/httpmenu.dart';
+import '../../securestorage.dart';
 
-class TranFerQr extends StatefulWidget {
-  const TranFerQr({Key? key, required this.point, required this.idstore})
-      : super(key: key);
-  final int point;
-  final String idstore;
+class TranFer extends StatefulWidget {
+  const TranFer({super.key});
 
   @override
-  State<TranFerQr> createState() => _TranFerQrState();
+  State<TranFer> createState() => _TranFerState();
 }
 
-class _TranFerQrState extends State<TranFerQr> {
+class _TranFerState extends State<TranFer> {
+  final _ctrlToID = TextEditingController();
+  final _ctrlAmount = TextEditingController();
   late Future<Map<String, dynamic>> datapoint;
-  var point = 0;
   var pointid = 0;
   var token = "";
   var idAccount = "";
-  var idstore = "";
   @override
   void initState() {
-    idstore = widget.idstore;
-    point = widget.point;
     super.initState();
-    token = context.read<AppData>().token;
-    idAccount = context.read<AppData>().idAccount;
-    apigetpoint(token).then((value) => setState(() {
-          pointid = value.point;
-        }));
+    getData().then((_) {
+      apigetpoint(token).then((value) => setState(() {
+            pointid = value.point;
+          }));
+    });
+  }
+
+  Future<void> getData() async {
+    token = await SecureStorage().read("token") as String;
+    idAccount = await SecureStorage().read("idAccount") as String;
   }
 
   @override
@@ -81,7 +80,42 @@ class _TranFerQrState extends State<TranFerQr> {
                 bottom: widthsize * 0.2,
                 right: widthsize * 0.045,
                 child: InkWell(
-                    onTap: btntranfer,
+                    onTap: () {
+                      TranferService()
+                          .apiValidateTranfer(_ctrlToID.text, token)
+                          .then((value) => {
+                                if (value != null)
+                                  {
+                                    if (int.parse(_ctrlAmount.text) > 0)
+                                      {
+                                        if (int.parse(_ctrlAmount.text) <
+                                            pointid)
+                                          {
+                                            showAlertDecide(context,
+                                                title: 'ยืนยันการโอนบัญชี',
+                                                content:
+                                                    'โอนไปยัง ชื่อผู้ใช้ ${value.payee} \n idผู้ใช้ ${_ctrlToID.text}',
+                                                okAction: btntranfer)
+                                          }
+                                        else
+                                          {
+                                            showAlertBox(context, 'แจ้งเตือน',
+                                                'จำนวนเงินไม่เพียงพอ')
+                                          }
+                                      }
+                                    else
+                                      {
+                                        showAlertBox(context, 'แจ้งเตือน',
+                                            'กรุณากำจำนวนเงินที่มากกว่า 0')
+                                      }
+                                  }
+                                else
+                                  {
+                                    showAlertBox(context, 'แจ้งเตือน',
+                                        'ไม่มีไอดีนี้ในระบบ')
+                                  },
+                              });
+                    },
                     child: Image.asset('images/correct.png'))),
           ],
         )),
@@ -90,30 +124,23 @@ class _TranFerQrState extends State<TranFerQr> {
   }
 
   void btntranfer() {
-    if (pointid > point) {
-      TranferService().apiTranfer(idstore, point, token).then((value) => {
-            if (value!.code == 200)
-              {
-                Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => Receipt(
-                            idAccount: idAccount,
-                            message: value.message,
-                            state: value.state,
-                            payee: value.payee,
-                            date: value.date,
-                            point: value.point,
-                            balance: value.balance,
-                          )),
-                )
-              }
-            else
-              {showAlertBox(context, 'แจ้งเตือน', 'ไม่มีไอดีนี้อยู่ในระบบ')}
-          });
-    } else {
-      showAlertBox(context, 'แจ้งเตือน', 'จำนวนเงินไม่เพียงพอ');
-    }
+    TranferService()
+        .apiTranfer(_ctrlToID.text, int.parse(_ctrlAmount.text), token)
+        .then((value) => {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => Receipt(
+                          idAccount: idAccount,
+                          message: value!.message,
+                          state: value.state,
+                          payee: value.payee,
+                          date: value.date,
+                          point: value.point,
+                          balance: value.balance,
+                        )),
+              )
+            });
   }
 
   Widget title(widthsize, heightsize) => SizedBox(
@@ -166,7 +193,7 @@ class _TranFerQrState extends State<TranFerQr> {
                 SizedBox(
                   height: heightsize * 0.04,
                 ),
-                Text("$pointid Point",
+                Text("${NumberFormat("#,##0").format(pointid)} Point",
                     style: TextStyle(
                         color: const Color(0xFFFFFFFF),
                         fontSize: heightsize * 0.05,
@@ -196,18 +223,18 @@ class _TranFerQrState extends State<TranFerQr> {
       );
 
   Widget fieldToID(widthsize, heightsize) => TextField(
-        readOnly: true,
+        keyboardType: TextInputType.number,
+        controller: _ctrlToID,
         decoration: InputDecoration(
-            hintText: idstore,
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             fillColor: const Color(0xFFD9D9D9),
             filled: true),
       );
 
   Widget fieldAmount(widthsize, heightsize) => TextField(
-        readOnly: true,
+        keyboardType: TextInputType.number,
+        controller: _ctrlAmount,
         decoration: InputDecoration(
-            hintText: NumberFormat("#,##0").format(point),
             border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
             fillColor: const Color(0xFFD9D9D9),
             filled: true),

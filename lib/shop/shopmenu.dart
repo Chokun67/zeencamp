@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
-import 'package:zeencamp/application/httpmenu.dart';
-import 'package:zeencamp/domain/pvd_data.dart';
-import 'package:zeencamp/menu/history.dart';
-import 'package:zeencamp/menu/tranfer.dart';
+import 'package:zeencamp/application/accountService/httpmenu.dart';
+import 'package:zeencamp/menu/Tranfer/history.dart';
+import 'package:zeencamp/menu/Tranfer/tranfer.dart';
 import 'package:zeencamp/shop/buypoint.dart';
 import 'package:zeencamp/shop/qrgenerate.dart';
 import 'package:zeencamp/shop/setting.dart';
+
+import '../background.dart';
+import '../securestorage.dart';
 
 class ShopMenu extends StatefulWidget {
   const ShopMenu({super.key});
@@ -27,78 +28,90 @@ class _ShopMenuState extends State<ShopMenu> {
   var token = "";
   var iduser = "";
   var idname = "";
-   var idAccount = "";
+  var idAccount = "";
   @override
   void initState() {
     super.initState();
-    token = context.read<AppData>().token;
-    idAccount = context.read<AppData>().idAccount;
-    fetchpoint();
+    getData().then((_) {
+      fetchpoint();
+    });
   }
-
+  Future<void> getData() async {
+    token = await SecureStorage().read("token") as String;
+    idAccount = await SecureStorage().read("idAccount") as String;
+  }
   void fetchpoint() => apigetpoint(token).then((value) => setState(() {
         pointid = value.point;
         iduser = value.id;
         idname = value.name;
-        // print(value['point']);
       }));
 
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
     final widthsize = MediaQuery.of(context).size.width;
-    return Scaffold(
-      body: SafeArea(
-          child: Stack(
-            children: [
-              Container(
-        width: widthsize,
-        height: heightsize,
-        color: const Color(0xFF4A4A4A),
-        child: Column(
-              children: [
-                Container(
-                  width: widthsize,
-                  height: heightsize * 0.362,
-                  decoration: const BoxDecoration(
-                    borderRadius:
-                        BorderRadius.only(bottomLeft: Radius.circular(90)),
-                    color: Color(0xFFFFD600),
-                  ),
-                  child: Row(
-                    children: [
-                      Container(
-                        width: widthsize * 0.223,
-                      ),
-                      circlePoint(heightsize, widthsize),
-                      settingButton(heightsize, widthsize),
-                    ],
-                  ),
-                ),
-                Padding(
-                  padding: EdgeInsets.all(widthsize * 0.1),
-                  child: Column(
-                    children: [
-                      buyPoint(widthsize, heightsize),
-                      SizedBox(height: heightsize * 0.04),
-                      tranFer(widthsize, heightsize),
-                      SizedBox(height: heightsize * 0.04),
-                      createQR(widthsize, heightsize),
-                      SizedBox(height: heightsize * 0.04),
-                      historyPoint(widthsize, heightsize)
-                    ],
-                  ),
-                ),
-              ],
-        ),
-      ),Positioned(
-              top: widthsize * 0.04,
-              left: widthsize * 0.04,
+    return WillPopScope(
+      onWillPop: () async {
+        showAlertDecide(context,
+            title: 'แจ้งเตือน',
+            content: 'ยืนยันการออกจากระบบ',
+            okAction: logOut);
+        return false;
+      },
+      child: Scaffold(
+        body: SafeArea(
+            child: Stack(
+          children: [
+            Container(
+              width: widthsize,
+              height: heightsize,
+              color: const Color(0xFF4A4A4A),
               child: Column(
-                children: [Text("user: $idname\nid: $idAccount ")],
-              ))
-            ],
-          )),
+                children: [
+                  Container(
+                    width: widthsize,
+                    height: heightsize * 0.362,
+                    decoration: const BoxDecoration(
+                      borderRadius:
+                          BorderRadius.only(bottomLeft: Radius.circular(90)),
+                      color: Color(0xFFFFD600),
+                    ),
+                    child: Row(
+                      children: [
+                        Container(
+                          width: widthsize * 0.223,
+                        ),
+                        circlePoint(heightsize, widthsize),
+                        settingButton(heightsize, widthsize),
+                      ],
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.all(widthsize * 0.1),
+                    child: Column(
+                      children: [
+                        buyPoint(widthsize, heightsize),
+                        SizedBox(height: heightsize * 0.04),
+                        tranFer(widthsize, heightsize),
+                        SizedBox(height: heightsize * 0.04),
+                        createQR(widthsize, heightsize),
+                        SizedBox(height: heightsize * 0.04),
+                        historyPoint(widthsize, heightsize)
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Positioned(
+                top: widthsize * 0.04,
+                left: widthsize * 0.04,
+                child: Column(
+                  children: [Text("user: $idname\nid: $idAccount ")],
+                ))
+          ],
+        )),
+      ),
     );
   }
 
@@ -215,4 +228,9 @@ class _ShopMenuState extends State<ShopMenu> {
               children: [Text("Point History", style: styleBlack(heightsize))]),
         ),
       );
+
+  void logOut() {
+    SecureStorage().deleteAll();
+    Navigator.pop(context);
+  }
 }

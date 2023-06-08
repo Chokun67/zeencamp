@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 import 'package:zeencamp/shop/shopmenu.dart';
 
 import '../background.dart';
+import '../securestorage.dart';
 
 class Loginpage extends StatefulWidget {
   const Loginpage({super.key});
@@ -18,6 +19,8 @@ class _LoginpageState extends State<Loginpage> {
   bool obscureText = true;
   final _ctrlLogin = TextEditingController();
   final _ctrlPswd = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
+  bool isvalid = true;
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
@@ -57,51 +60,62 @@ class _LoginpageState extends State<Loginpage> {
         height: heightsize * 0.6,
         width: widthsize * 0.8,
         padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            SizedBox(height: heightsize * 0.01),
-            Text(
-              "Login",
-              style: TextStyle(
-                  fontSize: heightsize * 0.03, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: heightsize * 0.04),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text("Email",style: TextStyle(fontSize: heightsize*0.015),),
-              ],
-            ),
-            textFieldUser(heightsize),
-            SizedBox(
-              height: heightsize * 0.01,
-            ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text("Password",style: TextStyle(fontSize: heightsize*0.015)),
-              ],
-            ),
-            textFieldPassword(heightsize),
-            pwRemember(),
-            SizedBox(height: heightsize * 0.047),
-            loginButton(heightsize, widthsize, context),
-            createAccButton(heightsize, widthsize, context),
-          ],
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              SizedBox(height: heightsize * 0.01),
+              Text(
+                "Login",
+                style: TextStyle(
+                    fontSize: heightsize * 0.03, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: heightsize * 0.04),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    "Email",
+                    style: TextStyle(fontSize: heightsize * 0.015),
+                  ),
+                ],
+              ),
+              textFieldUser(heightsize),
+              SizedBox(
+                height: heightsize * 0.01,
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text("Password",
+                      style: TextStyle(fontSize: heightsize * 0.015)),
+                ],
+              ),
+              textFieldPassword(heightsize),
+              pwRemember(),
+              SizedBox(height: heightsize * 0.047),
+              loginButton(heightsize, widthsize, context),
+              createAccButton(heightsize, widthsize, context),
+            ],
+          ),
         ),
       );
 
   Widget textFieldUser(heightsize) => Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.zero),
-          border: Border.all(
-              color: const Color(0xFFAD6800),
-              width: 2,
-              style: BorderStyle.solid),
+        decoration: const BoxDecoration(
+          borderRadius: BorderRadius.all(Radius.zero),
         ),
-        child: TextField(
+        child: TextFormField(
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'กรุณากรอกค่า';
+            } else if (value.length < 8) {
+              return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
+            }
+            return null;
+          },
           controller: _ctrlLogin,
           keyboardType: TextInputType.emailAddress,
           style: TextStyle(fontSize: heightsize * 0.02),
@@ -120,14 +134,18 @@ class _LoginpageState extends State<Loginpage> {
 
   Widget textFieldPassword(heightsize) => Container(
         width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(Radius.zero),
-          border: Border.all(
-              color: const Color(0xFFAD6800),
-              width: 2,
-              style: BorderStyle.solid),
-        ),
-        child: TextField(
+        decoration:
+            const BoxDecoration(borderRadius: BorderRadius.all(Radius.zero)),
+        child: TextFormField(
+          validator: (value) {
+            if (value!.isEmpty) {
+              return 'กรุณากรอกค่า';
+            } else if (!isvalid) {
+              isvalid = true;
+              return 'กรุณาตรวจสอบความถูกต้อง';
+            }
+            return null;
+          },
           controller: _ctrlPswd,
           obscureText: obscureText,
           style: TextStyle(fontSize: heightsize * 0.02),
@@ -178,39 +196,44 @@ class _LoginpageState extends State<Loginpage> {
       );
 
   void btnlogin() {
-    // late Future<Map<String, dynamic>> futureLogin;
-    AccountService().apiLogin(_ctrlLogin.text, _ctrlPswd.text).then((value) => {
-          if (value != null)
-            {
-              if (value.isstore == false)
-                {
+    if (_formKey.currentState!.validate()) {
+      AccountService().apiLogin(_ctrlLogin.text, _ctrlPswd.text).then((value) =>
+          {
+            if (value != null)
+              {
+                if (value.isstore == false)
+                  {
+                    {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const Menu()),
+                      ),
+                      SecureStorage().write('token', value.accessToken),
+                      SecureStorage().write('idAccount', value.idAccount),
+                      context.read<AppData>().token = value.accessToken,
+                      context.read<AppData>().idAccount = value.idAccount,
+                    }
+                  }
+                else
                   {
                     Navigator.push(
-                      // context,
-                      // MaterialPageRoute(builder: (context) => const Menu(token: "1",)),
                       context,
-                      MaterialPageRoute(builder: (context) => const Menu()),
+                      MaterialPageRoute(builder: (context) => const ShopMenu()),
                     ),
+                    SecureStorage().write('token', value.accessToken),
+                    SecureStorage().write('idAccount', value.idAccount),
                     context.read<AppData>().token = value.accessToken,
                     context.read<AppData>().idAccount = value.idAccount,
                   }
-                }
-              else
-                {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => const ShopMenu()),
-                  ),
-                  context.read<AppData>().token = value.accessToken,
-                  context.read<AppData>().idAccount = value.idAccount,
-                }
-            }
-          else
-            {
-              showAlertBox(
-                  context, 'แจ้งเตือน', 'ชื่อผู้ใช้หรือรหัสผ่านพิดพลาด')
-            }
-        });
+              }
+            else
+              {
+                showAlertBox(
+                    context, 'แจ้งเตือน', 'ชื่อผู้ใช้หรือรหัสผ่านพิดพลาด'),
+                isvalid = false
+              }
+          });
+    }
   }
 
   Widget createAccButton(

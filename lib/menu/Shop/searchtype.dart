@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:zeencamp/background.dart';
-import 'package:zeencamp/menu/searchshop.dart';
+import 'package:zeencamp/menu/Shop/searchshop.dart';
 
 class SearchType extends StatefulWidget {
   const SearchType({super.key});

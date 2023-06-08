@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 class MyStyle {
-  SafeArea buildBackground(double widthsize, double heightsize,context,String title) {
+  SafeArea buildBackground(
+      double widthsize, double heightsize, context, String title) {
     return SafeArea(
       child: Stack(
         children: [
@@ -20,11 +21,11 @@ class MyStyle {
             )),
           ),
           Positioned(
-                top: widthsize * 0.077,
-                left: widthsize * 0.077,
-                child: InkWell(
-                    onTap: () =>Navigator.pop(context),
-                    child: Image.asset('images/back.png')))
+              top: widthsize * 0.077,
+              left: widthsize * 0.077,
+              child: InkWell(
+                  onTap: () => Navigator.pop(context),
+                  child: Image.asset('images/back.png')))
         ],
       ),
     );
@@ -46,7 +47,7 @@ class MyStyle {
               ),
               Container(
                 width: widthsize,
-                height: heightsize - heightsize * 0.233,
+                height: heightsize - heightsize * 0.255,
                 decoration: const BoxDecoration(
                   borderRadius: BorderRadius.only(topLeft: Radius.circular(90)),
                   color: Color(0xFF4A4A4A),
@@ -69,7 +70,7 @@ class MyStyle {
             bottom: 0,
             child: Container(
               width: widthsize,
-              height: heightsize * 0.032,
+              height: heightsize * 0.034,
               color: const Color(0xFF4A4A4A),
             ))
       ],
@@ -103,3 +104,34 @@ void showAlertBox(BuildContext context, String title, String content) {
     },
   );
 }
+
+void showAlertDecide(BuildContext context, {String title = '', String content = '', Function? okAction}) {
+  showDialog<void>(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text(title),
+        content: Text(content),
+        actions: [
+          ElevatedButton(
+            child: const Text('ยกเลิก'),
+            onPressed: () {
+              Navigator.of(context).pop();
+            },
+          ),
+          ElevatedButton(
+            child: const Text('ตกลง'),
+            onPressed: () {
+              Navigator.of(context).pop();
+              if (okAction != null) {
+                okAction();
+              }
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
+
+

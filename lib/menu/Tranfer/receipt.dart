@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-class DetailTranfer extends StatelessWidget {
-  // const DetailTranfer({super.key});
-  const DetailTranfer(
+class Receipt extends StatelessWidget {
+  // const Receipt({super.key});
+  const Receipt(
       {Key? key,
       required this.idAccount,
+      required this.message,
       required this.state,
       required this.payee,
       required this.date,
-      required this.point,})
+      required this.point,
+      required this.balance})
       : super(key: key);
   final String idAccount;
+  final String message;
   final String state;
   final String payee;
   final String date;
   final int point;
+  final int balance;
 
   TextStyle stylewhite(heightsize) => TextStyle(
       color: const Color(0xFFFFFFFF),
-      fontSize: heightsize * 0.022,
+      fontSize: heightsize * 0.02,
       fontWeight: FontWeight.w500);
   @override
   Widget build(BuildContext context) {
@@ -47,7 +51,7 @@ class DetailTranfer extends StatelessWidget {
                   child: Column(
                     children: [
                       title(widthsize, heightsize),
-                      titleDetailTranfer(widthsize, heightsize),
+                      titleReceipt(widthsize, heightsize),
                     ],
                   ),
                 ),
@@ -100,8 +104,11 @@ class DetailTranfer extends StatelessWidget {
         ],
       ));
 
-  Widget titleDetailTranfer(widthsize, heightsize) => Container(
-        padding: EdgeInsets.only(left: 0.06 * widthsize, top: 0.05 * widthsize,right: 0.04*widthsize),
+  Widget titleReceipt(widthsize, heightsize) => Container(
+        padding: EdgeInsets.only(
+            left: 0.06 * widthsize,
+            top: 0.05 * widthsize,
+            right: 0.04 * widthsize),
         height: heightsize * 0.195,
         width: widthsize * 0.9,
         decoration: BoxDecoration(
@@ -125,14 +132,28 @@ class DetailTranfer extends StatelessWidget {
                         color: const Color(0xFFFFFFFF),
                         fontSize: heightsize * 0.025,
                         fontWeight: FontWeight.bold)),
-                Text(NumberFormat("#,##0").format(point),
+                Text(isDeposit(state)?"+${point.toString()}":point.toString(),
                     style: TextStyle(
-                        color: const Color(0xFFEB3F3F),
+                        color: isDeposit(state)?const Color(0xFF2CC14D):const Color(0xFFEB3F3F),
                         fontSize: heightsize * 0.03,
                         fontWeight: FontWeight.bold)),
               ],
             ),
-            
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text("ยอดคงเหลือ",
+                    style: TextStyle(
+                        color: const Color(0xFFFFFFFF),
+                        fontSize: heightsize * 0.025,
+                        fontWeight: FontWeight.bold)),
+                Text(NumberFormat("#,##0").format(balance),
+                    style: TextStyle(
+                        color: const Color(0xFF2CC14D),
+                        fontSize: heightsize * 0.03,
+                        fontWeight: FontWeight.bold)),
+              ],
+            )
           ],
         ),
       );
@@ -149,7 +170,7 @@ class DetailTranfer extends StatelessWidget {
             left: widthsize * 0.05,
             bottom: widthsize * 0.02,
             top: widthsize * 0.03),
-        child: Text("โอน Point",
+        child: Text(isDeposit(state)?"รับ Point":"โอน Point",
             style: TextStyle(
                 color: const Color(0xFFFFFFFF),
                 fontSize: heightsize * 0.03,
@@ -223,4 +244,8 @@ class DetailTranfer extends StatelessWidget {
           ],
         ),
       );
+
+  bool isDeposit(String state) {
+    return state == "deposit";
+  }
 }

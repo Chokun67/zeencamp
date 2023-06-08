@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:qr_code_scanner/qr_code_scanner.dart';
-import 'package:zeencamp/menu/tranferqr.dart';
+import 'package:zeencamp/menu/Tranfer/tranferqr.dart';
 
 class QrScaner extends StatefulWidget {
   const QrScaner({super.key});
@@ -23,8 +23,8 @@ class _QrScanerState extends State<QrScaner> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('QR Code Scanner'),backgroundColor: const Color(0xFFFFD600),foregroundColor: 
-        const Color(0xFF020202),
+        title: const Text('QR จ่ายเงิน'),backgroundColor: const Color(0xFF4A4A4A),foregroundColor: 
+        const Color(0xFFFFD600),
       ),
       body: Stack(
         children: [

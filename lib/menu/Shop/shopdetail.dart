@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:zeencamp/application/storeService/storeservice.dart';
 import 'package:zeencamp/domain/detailshopdm.dart';
 
-import '../domain/pvd_data.dart';
+import '../../domain/pvd_data.dart';
 
 class Shopdetail extends StatelessWidget {
   const Shopdetail({Key? key, required this.idshop, required this.nameshop})
@@ -12,15 +12,17 @@ class Shopdetail extends StatelessWidget {
   final String idshop;
   final String nameshop;
 
+  final String ip = "13.229.147.213";
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
     final widthsize = MediaQuery.of(context).size.width;
-
+    
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<Customer>(
-          future: StoresService().fetchStoreData(context.read<AppData>().token, idshop),
+          future: StoresService()
+              .fetchStoreData(context.read<AppData>().token, idshop),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -45,7 +47,7 @@ class Shopdetail extends StatelessWidget {
                     height: heightsize * 0.45,
                     decoration: const BoxDecoration(color: Colors.amber),
                     child: Image.network(
-                      'http://18.141.143.217:17003/api/v1/image/${customerData.storePicture}',
+                      'http://$ip:17003/api/v1/image/${customerData.storePicture}',
                       fit: BoxFit.cover,
                     ),
                   ),
@@ -55,13 +57,15 @@ class Shopdetail extends StatelessWidget {
                       width: widthsize,
                       height: heightsize,
                       decoration: const BoxDecoration(
-                        borderRadius: BorderRadius.only(topLeft: Radius.circular(90)),
+                        borderRadius:
+                            BorderRadius.only(topLeft: Radius.circular(90)),
                         color: Color(0xFF4A4A4A),
                       ),
                       child: Column(
                         children: [
                           positionShop(widthsize, heightsize, nameshop, idshop),
-                          detailMenu(widthsize, heightsize, context, customerData.menuStores),
+                          detailMenu(widthsize, heightsize, context,
+                              customerData.menuStores),
                         ],
                       ),
                     ),
@@ -83,7 +87,8 @@ class Shopdetail extends StatelessWidget {
     );
   }
 
-  Widget positionShop(double widthsize, double heightsize, String nameshop, String idshop) {
+  Widget positionShop(
+      double widthsize, double heightsize, String nameshop, String idshop) {
     return Container(
       margin: EdgeInsets.only(top: widthsize * 0.1, left: widthsize * 0.1),
       height: heightsize * 0.085,
@@ -159,7 +164,8 @@ class Shopdetail extends StatelessWidget {
     );
   }
 
-  Widget detailMenu(double widthsize, double heightsize, BuildContext context, List<Store>? menuStores) {
+  Widget detailMenu(double widthsize, double heightsize, BuildContext context,
+      List<Store>? menuStores) {
     return Container(
       margin: EdgeInsets.only(top: heightsize * 0.02),
       decoration: BoxDecoration(
@@ -167,14 +173,15 @@ class Shopdetail extends StatelessWidget {
         color: const Color(0xFFFFD600),
         border: Border.all(color: const Color(0xFFAD6800), width: 5),
       ),
-      height: heightsize * 0.5,
+      height: heightsize * 0.47,
       width: widthsize * 0.8,
       child: SingleChildScrollView(
         child: Column(
           children: List.generate(menuStores?.length ?? 0, (index) {
             final menuStore = menuStores?[index];
             return Container(
-              margin: EdgeInsets.only(bottom: heightsize * 0.01,left: widthsize*0.02),
+              margin: EdgeInsets.only(
+                  bottom: heightsize * 0.01, left: widthsize * 0.02),
               height: heightsize * 0.12,
               child: Row(
                 children: [
@@ -207,7 +214,7 @@ class Shopdetail extends StatelessWidget {
         border: Border.all(color: const Color(0xFF000000), width: 4),
       ),
       child: Image.network(
-        'http://18.141.143.217:17003/api/v1/image/$pictures',
+        'http://$ip:17003/api/v1/image/$pictures',
         fit: BoxFit.cover,
         // ปรับขนาดภาพให้พอดีกับขนาด Container
       ),

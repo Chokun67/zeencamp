@@ -5,8 +5,10 @@ import 'package:zeencamp/domain/tranferdm.dart';
 import 'dart:async';
 import 'dart:convert';
 
+import '../../domain/vldtranfer.dart';
+
 class TranferService {
-  var ipLogin = "18.141.143.217:17003";
+  var ipLogin = "13.214.130.86:17003";
 
   Future<Tranfer?> apiTranfer(String idTo, int pointTo, String token) async {
     // return const Customer(code: 200, accessToken: "123");
@@ -17,9 +19,6 @@ class TranferService {
           HttpHeaders.authorizationHeader: 'Bearer $token',
         },
         body: jsonEncode(<String, dynamic>{'payee': idTo, 'point': pointTo}));
-
-    // print(response.body);
-    // print(response.statusCode);
     if (response.statusCode == 200) {
       return Tranfer.fromJson(jsonDecode(response.body));
     }
@@ -44,5 +43,19 @@ class TranferService {
     } else {
       throw Exception('Failed to fetch stores');
     }
+  }
+
+
+  Future<ValidateTranfer?> apiValidateTranfer(String idpayee, String token) async {
+    var response = await http.get(
+        Uri.parse('http://$ipLogin/api/v1/member/validate-transfer-point?id_payee=$idpayee'),
+        headers: {
+          'content-type': 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+        },);
+    if (response.statusCode == 200) {
+      return ValidateTranfer.fromJson(jsonDecode(response.body));
+    }
+    return null;
   }
 }

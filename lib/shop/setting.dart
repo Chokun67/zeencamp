@@ -2,14 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:zeencamp/Authentication/login.dart';
 import 'package:zeencamp/background.dart';
 
+import '../securestorage.dart';
+import 'detailaccount.dart';
+
 class SettingShop extends StatelessWidget {
   const SettingShop({super.key});
 
   TextStyle styleSetting(heightsize) => TextStyle(
-            color: const Color(0xFFFFFFFF),
-            fontSize: heightsize * 0.035,
-            fontWeight: FontWeight.bold,
-          );
+        color: const Color(0xFFFFFFFF),
+        fontSize: heightsize * 0.035,
+        fontWeight: FontWeight.bold,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +26,7 @@ class SettingShop extends StatelessWidget {
             Column(
               children: [
                 titleSetting(widthsize, heightsize),
-                deTail(widthsize, heightsize,context),
+                deTail(widthsize, heightsize, context),
               ],
             )
           ],
@@ -39,19 +42,22 @@ class SettingShop extends StatelessWidget {
         ),
       );
 
-  Widget deTail(widthsize, heightsize,context) => Container(
+  Widget deTail(widthsize, heightsize, context) => Container(
         padding: EdgeInsets.only(top: heightsize * 0.1),
         height: heightsize * 0.5,
         child: Column(children: [
-          detailAccount(widthsize, heightsize),
-          detailPolicy(widthsize, heightsize),
-          detailLogout(widthsize, heightsize,context)
+          detailAccount(widthsize, heightsize,context),
+          detailPolicy(widthsize, heightsize,context),
+          detailLogout(widthsize, heightsize, context)
         ]),
       );
 
-  Widget detailAccount(widthsize, heightsize) => InkWell(
-    onTap: (){},
-    child: Container(
+  Widget detailAccount(widthsize, heightsize,context) => InkWell(
+        onTap: () {
+          Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const DetailAccount()));
+        },
+        child: Container(
           padding: EdgeInsets.only(left: widthsize * 0.1),
           alignment: Alignment.centerLeft,
           width: widthsize,
@@ -67,11 +73,11 @@ class SettingShop extends StatelessWidget {
             style: styleSetting(heightsize),
           ),
         ),
-  );
+      );
 
-  Widget detailPolicy(widthsize, heightsize) => InkWell(
-    onTap: (){},
-    child: Container(
+  Widget detailPolicy(widthsize, heightsize,context) => InkWell(
+        onTap: () {},
+        child: Container(
           padding: EdgeInsets.only(left: widthsize * 0.1),
           alignment: Alignment.centerLeft,
           width: widthsize,
@@ -86,15 +92,16 @@ class SettingShop extends StatelessWidget {
             style: styleSetting(heightsize),
           ),
         ),
-  );
+      );
 
-  Widget detailLogout(widthsize, heightsize,context) => InkWell(
-    onTap: (){Navigator.pushAndRemoveUntil(
-      context,
-      MaterialPageRoute(builder: (context) => const Loginpage()),
-      (route) => false,
-    );},
-    child: Container(
+  Widget detailLogout(widthsize, heightsize, context) => InkWell(
+        onTap: () {
+          showAlertDecide(context,
+              title: 'แจ้งเตือน', content: 'ยืนยันการออกจากระบบ', okAction: () {
+            logOut(context);
+          });
+        },
+        child: Container(
           padding: EdgeInsets.only(left: widthsize * 0.1),
           alignment: Alignment.centerLeft,
           width: widthsize,
@@ -109,5 +116,14 @@ class SettingShop extends StatelessWidget {
             style: styleSetting(heightsize),
           ),
         ),
-  );
+      );
+
+  void logOut(context) {
+    SecureStorage().deleteAll();
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const Loginpage()),
+      (route) => false,
+    );
+  }
 }
