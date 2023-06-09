@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/accountService/accountservice.dart';
 import 'package:zeencamp/background.dart';
@@ -116,8 +117,7 @@ class _RegisterpageState extends State<Registerpage> {
               return 'กรุณาป้อนอีเมล';
             } else if (value.length < 8) {
               return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
-            } else if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                .hasMatch(value)) {
+            } else if (!value.contains("@")) {
               return 'รูปแบบอีเมลไม่ถูกต้อง';
             }
             return null;
@@ -246,7 +246,7 @@ class _RegisterpageState extends State<Registerpage> {
       if (_ctrlpswd.text == _ctrlconfirm.text) {
         AccountService()
             .apiRegister(_ctrluser.text, _ctrlusername.text, _ctrlpswd.text,
-                selectedDate.toString(), dropdownValuegender)
+                DateFormat('yyyy-MM-dd').format(selectedDate), dropdownValuegender)
             .then((value) => {
                   if (value != null)
                     {

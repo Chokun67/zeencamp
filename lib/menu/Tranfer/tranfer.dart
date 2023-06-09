@@ -15,6 +15,7 @@ class TranFer extends StatefulWidget {
 }
 
 class _TranFerState extends State<TranFer> {
+  final _formKey = GlobalKey<FormState>();
   final _ctrlToID = TextEditingController();
   final _ctrlAmount = TextEditingController();
   late Future<Map<String, dynamic>> datapoint;
@@ -25,7 +26,7 @@ class _TranFerState extends State<TranFer> {
   void initState() {
     super.initState();
     getData().then((_) {
-      apigetpoint(token).then((value) => setState(() {
+      AccountDetail().apigetpoint(token).then((value) => setState(() {
             pointid = value.point;
           }));
     });
@@ -81,40 +82,30 @@ class _TranFerState extends State<TranFer> {
                 right: widthsize * 0.045,
                 child: InkWell(
                     onTap: () {
-                      TranferService()
-                          .apiValidateTranfer(_ctrlToID.text, token)
-                          .then((value) => {
-                                if (value != null)
-                                  {
-                                    if (int.parse(_ctrlAmount.text) > 0)
+                      if (_formKey.currentState!.validate()) {
+                        if (int.parse(_ctrlAmount.text) < pointid) {
+                          TranferService()
+                              .apiValidateTranfer(_ctrlToID.text, token)
+                              .then((value) => {
+                                    if (value != null)
                                       {
-                                        if (int.parse(_ctrlAmount.text) <
-                                            pointid)
-                                          {
-                                            showAlertDecide(context,
-                                                title: 'ยืนยันการโอนบัญชี',
-                                                content:
-                                                    'โอนไปยัง ชื่อผู้ใช้ ${value.payee} \n idผู้ใช้ ${_ctrlToID.text}',
-                                                okAction: btntranfer)
-                                          }
-                                        else
-                                          {
-                                            showAlertBox(context, 'แจ้งเตือน',
-                                                'จำนวนเงินไม่เพียงพอ')
-                                          }
+                                        showAlertDecide(context,
+                                            title: 'ยืนยันการโอนบัญชี',
+                                            content:
+                                                'โอนไปยัง ชื่อผู้ใช้ ${value.payee} \n idผู้ใช้ ${_ctrlToID.text}\n จำนวน ${_ctrlAmount.text} Point',
+                                            okAction: btntranfer)
                                       }
                                     else
                                       {
                                         showAlertBox(context, 'แจ้งเตือน',
-                                            'กรุณากำจำนวนเงินที่มากกว่า 0')
-                                      }
-                                  }
-                                else
-                                  {
-                                    showAlertBox(context, 'แจ้งเตือน',
-                                        'ไม่มีไอดีนี้ในระบบ')
-                                  },
-                              });
+                                            'ไม่มีไอดีนี้ในระบบ')
+                                      },
+                                  });
+                        } else {
+                          showAlertBox(
+                              context, 'แจ้งเตือน', 'จำนวนเงินไม่เพียงพอ');
+                        }
+                      }
                     },
                     child: Image.asset('images/correct.png'))),
           ],
@@ -127,19 +118,24 @@ class _TranFerState extends State<TranFer> {
     TranferService()
         .apiTranfer(_ctrlToID.text, int.parse(_ctrlAmount.text), token)
         .then((value) => {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(
-                    builder: (context) => Receipt(
-                          idAccount: idAccount,
-                          message: value!.message,
-                          state: value.state,
-                          payee: value.payee,
-                          date: value.date,
-                          point: value.point,
-                          balance: value.balance,
-                        )),
-              )
+              if (value != null)
+                {
+                  Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Receipt(
+                              idAccount: idAccount,
+                              message: value.message,
+                              state: value.state,
+                              payee: value.payee,
+                              date: value.date,
+                              point: value.point,
+                              balance: value.balance,
+                            )),
+                  )
+                }
+              else
+                {showAlertBox(context, 'แจ้งเตือน', 'เกิดข้อผิดพลาดในการโอน')}
             });
   }
 
@@ -204,25 +200,45 @@ class _TranFerState extends State<TranFer> {
         ],
       ));
 
-  Widget formTranFer(widthsize, heightsize) => Padding(
-        padding: EdgeInsets.all(widthsize * 0.05),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text("ไปยัง ID",
-              style: TextStyle(
-                  color: const Color(0xFFFFFFFF),
-                  fontSize: heightsize * 0.03,
-                  fontWeight: FontWeight.bold)),
-          fieldToID(widthsize, heightsize),
-          Text("จำนวน",
-              style: TextStyle(
-                  color: const Color(0xFFFFFFFF),
-                  fontSize: heightsize * 0.03,
-                  fontWeight: FontWeight.bold)),
-          fieldAmount(widthsize, heightsize),
-        ]),
+  Widget formTranFer(widthsize, heightsize) => Form(
+        key: _formKey,
+        child: Padding(
+          padding: EdgeInsets.all(widthsize * 0.05),
+          child:
+              Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+            Text("ไปยัง ID",
+                style: TextStyle(
+                    color: const Color(0xFFFFFFFF),
+                    fontSize: heightsize * 0.03,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(
+                height: heightsize * 0.1,
+                child: fieldToID(widthsize, heightsize)),
+            Text("จำนวน",
+                style: TextStyle(
+                    color: const Color(0xFFFFFFFF),
+                    fontSize: heightsize * 0.03,
+                    fontWeight: FontWeight.bold)),
+            SizedBox(
+                height: heightsize * 0.1,
+                child: fieldAmount(widthsize, heightsize)),
+          ]),
+        ),
       );
 
-  Widget fieldToID(widthsize, heightsize) => TextField(
+  Widget fieldToID(widthsize, heightsize) => TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'กรุณากรอกค่า';
+          } else if (value.length != 9 ||
+              !RegExp(r'^[0-9]+$').hasMatch(value)) {
+            return 'รูปแบบข้อความไม่ถูกต้อง';
+          } else if (value == idAccount) {
+            return 'ไม่สามารถส่งพ้อยไปยังไอดีต้นทางได้';
+          }
+          return null;
+        },
         keyboardType: TextInputType.number,
         controller: _ctrlToID,
         decoration: InputDecoration(
@@ -231,7 +247,18 @@ class _TranFerState extends State<TranFer> {
             filled: true),
       );
 
-  Widget fieldAmount(widthsize, heightsize) => TextField(
+  Widget fieldAmount(widthsize, heightsize) => TextFormField(
+        autovalidateMode: AutovalidateMode.onUserInteraction,
+        validator: (value) {
+          if (value!.isEmpty) {
+            return 'กรุณากรอกค่า';
+          } else if (int.tryParse(value) == null || int.parse(value) <= 0) {
+            return 'รูปแบบข้อมูลไม่ถูกต้อง';
+          } else if (int.parse(value) > pointid) {
+            return 'จำนวนเงินไม่เพียงพอ';
+          }
+          return null;
+        },
         keyboardType: TextInputType.number,
         controller: _ctrlAmount,
         decoration: InputDecoration(

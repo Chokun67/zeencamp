@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-
-import '../background.dart';
+import 'package:zeencamp/application/accountService/accountservice.dart';
+import '../../background.dart';
+import '../../securestorage.dart';
 
 class DetailAccount extends StatefulWidget {
   const DetailAccount({super.key});
@@ -13,6 +14,41 @@ class _DetailAccountState extends State<DetailAccount> {
   final _formKey = GlobalKey<FormState>();
   final _ctrlname = TextEditingController();
   final _ctrlusername = TextEditingController();
+
+  var token = "";
+  var iduser = "";
+  var idname = "";
+  var birthday = "";
+  var sex = "";
+  var idAccount = "";
+  var age = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    getData().then((_) {
+      AccountService().apigetpersonal(token).then((value) => {
+            if (value != null)
+              {
+                setState(() {
+                  idname = value.name;
+                  iduser = value.username;
+                  birthday = value.birthday;
+                  sex = value.sex;
+                  age = value.age;
+                })
+              }
+            else
+              {print("error")}
+          });
+    });
+  }
+
+  Future<void> getData() async {
+    token = await SecureStorage().read("token") as String;
+    idAccount = await SecureStorage().read("idAccount") as String;
+  }
+
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
@@ -81,9 +117,9 @@ class _DetailAccountState extends State<DetailAccount> {
             }
             return null;
           },
-          decoration: const InputDecoration(
-            hintText: "Password",
-            fillColor: Color(0xFFA6A6A6),
+          decoration: InputDecoration(
+            hintText: "name : $idname",
+            fillColor: const Color(0xFFA6A6A6),
             filled: true,
           ),
         ),
@@ -104,9 +140,9 @@ class _DetailAccountState extends State<DetailAccount> {
             }
             return null;
           },
-          decoration: const InputDecoration(
-            hintText: "Password",
-            fillColor: Color(0xFFA6A6A6),
+          decoration: InputDecoration(
+            hintText: "email : $iduser",
+            fillColor: const Color(0xFFA6A6A6),
             filled: true,
           ),
         ),
@@ -127,9 +163,9 @@ class _DetailAccountState extends State<DetailAccount> {
             }
             return null;
           },
-          decoration: const InputDecoration(
-            hintText: "Password",
-            fillColor: Color(0xFFA6A6A6),
+          decoration: InputDecoration(
+            hintText: "birthday : $birthday",
+            fillColor: const Color(0xFFA6A6A6),
             filled: true,
           ),
         ),
@@ -150,9 +186,9 @@ class _DetailAccountState extends State<DetailAccount> {
             }
             return null;
           },
-          decoration: const InputDecoration(
-            hintText: "Password",
-            fillColor: Color(0xFFA6A6A6),
+          decoration: InputDecoration(
+            hintText: "Gender : $sex",
+            fillColor: const Color(0xFFA6A6A6),
             filled: true,
           ),
         ),

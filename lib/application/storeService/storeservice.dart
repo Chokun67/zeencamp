@@ -1,11 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:zeencamp/domain/allstore.dart';
-import 'package:zeencamp/domain/detailshopdm.dart';
+import 'package:zeencamp/domain/dmstore/allstore.dart';
+import 'package:zeencamp/domain/dmstore/detailshopdm.dart';
 
 class StoresService {
-  var ipLogin = "13.214.130.86:17003";
+  var ipLogin = "13.214.174.255:17003";
   Future<List<Allstore>> getStores(token) async {
     final response = await http.get(
       Uri.parse('http://$ipLogin/api/v1/stores/get-all-stores'),
@@ -14,8 +14,7 @@ class StoresService {
         HttpHeaders.authorizationHeader: 'Bearer $token',
       },
     );
-    print(response.body);
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
       final List<dynamic> jsonList = jsonDecode(response.body);
       List<Allstore> stores =

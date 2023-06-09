@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/accountService/httpmenu.dart';
 import 'package:zeencamp/application/tranferService/tranferservice.dart';
-import 'package:zeencamp/domain/historydm.dart';
+import 'package:zeencamp/domain/dmtranfer/historydm.dart';
 import 'package:zeencamp/menu/Tranfer/detailtranfer.dart';
 import '../../domain/pvd_data.dart';
 import '../../securestorage.dart';
@@ -27,7 +27,7 @@ class _HistoryPointState extends State<HistoryPoint> {
     // idAccount = context.read<AppData>().idAccount;
     // token = context.read<AppData>().token;
     getData().then((_) {
-      apigetpoint(token).then((value) => setState(() {
+       AccountDetail().apigetpoint(token).then((value) => setState(() {
             pointid = value.point;
           }));
       fetchData();

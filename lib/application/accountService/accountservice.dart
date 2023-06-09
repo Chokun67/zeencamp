@@ -1,12 +1,14 @@
+import 'dart:io';
+
 import 'package:http/http.dart' as http;
 import 'dart:async';
 import 'dart:convert';
-import '../../domain/customer.dart';
-import '../../domain/personal.dart';
-import '../../domain/register.dart' show Register;
+import '../../domain/dmaccount/customer.dart';
+import '../../domain/dmaccount/personal.dart';
+import '../../domain/dmaccount/register.dart' show Register;
 
 class AccountService {
-  var ipLogin = "13.214.130.86:17003";
+  var ipLogin = "13.214.174.255:17003";
 
   Future<Customer?> apiLogin(String login, String pswd) async {
     var response = await http.post(
@@ -24,7 +26,6 @@ class AccountService {
 
   Future<Register?> apiRegister(String login, String username, String pswd,
       String date, String gender) async {
-
     print(date);
 
     var url = Uri.parse('http://$ipLogin/api/v1/member/register');
@@ -47,18 +48,19 @@ class AccountService {
     }
   }
 
-  Future<Personal> apigetpersonal(String login, String username, String pswd,
-      String date, String gender) async {
-    var url = Uri.parse('http://$ipLogin/api/v1/member/get-personal-data');
-    var headers = {'Content-Type': 'application/json'};
-
-
-    var response = await http.get(url, headers: headers);
+  Future<Personal?> apigetpersonal(String token) async {
+    var response = await http.get(
+      Uri.parse('http://$ipLogin/api/v1/member/get-personal-data'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      },
+    );
     print(response.statusCode);
+    var decodeutf8 = utf8.decode(response.bodyBytes);
     if (response.statusCode == 200) {
-      return Personal.fromJson(jsonDecode(response.body));
+      return Personal.fromJson(jsonDecode(decodeutf8));
     } else {
-      throw Exception('Failed to fetch user data');
+      return null;
     }
   }
 }

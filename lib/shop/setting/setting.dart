@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:zeencamp/Authentication/login.dart';
 import 'package:zeencamp/background.dart';
 
-import '../securestorage.dart';
+import '../../securestorage.dart';
+import 'changeid.dart';
 import 'detailaccount.dart';
 
 class SettingShop extends StatelessWidget {
@@ -47,6 +48,7 @@ class SettingShop extends StatelessWidget {
         height: heightsize * 0.5,
         child: Column(children: [
           detailAccount(widthsize, heightsize,context),
+          tranferToShop(widthsize, heightsize,context),
           detailPolicy(widthsize, heightsize,context),
           detailLogout(widthsize, heightsize, context)
         ]),
@@ -89,6 +91,26 @@ class SettingShop extends StatelessWidget {
           ),
           child: Text(
             "ข้อกำหนดและนโยบาย",
+            style: styleSetting(heightsize),
+          ),
+        ),
+      );
+
+      Widget tranferToShop(widthsize, heightsize,context) => InkWell(
+        onTap: () {Navigator.push(context,
+              MaterialPageRoute(builder: (context) => const ChangeId()));},
+        child: Container(
+          padding: EdgeInsets.only(left: widthsize * 0.1),
+          alignment: Alignment.centerLeft,
+          width: widthsize,
+          height: heightsize * 0.1,
+          decoration: const BoxDecoration(
+            border: Border(
+              bottom: BorderSide(color: Colors.black),
+            ),
+          ),
+          child: Text(
+            "เปลี่ยนเป็นไอดีร้านค้า",
             style: styleSetting(heightsize),
           ),
         ),

@@ -32,7 +32,7 @@ class _TranFerQrState extends State<TranFerQr> {
     super.initState();
     token = context.read<AppData>().token;
     idAccount = context.read<AppData>().idAccount;
-    apigetpoint(token).then((value) => setState(() {
+     AccountDetail().apigetpoint(token).then((value) => setState(() {
           pointid = value.point;
         }));
   }

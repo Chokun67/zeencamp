@@ -5,7 +5,7 @@ import 'package:zeencamp/menu/Tranfer/history.dart';
 import 'package:zeencamp/menu/Tranfer/tranfer.dart';
 import 'package:zeencamp/shop/buypoint.dart';
 import 'package:zeencamp/shop/qrgenerate.dart';
-import 'package:zeencamp/shop/setting.dart';
+import 'package:zeencamp/shop/setting/setting.dart';
 
 import '../background.dart';
 import '../securestorage.dart';
@@ -40,7 +40,7 @@ class _ShopMenuState extends State<ShopMenu> {
     token = await SecureStorage().read("token") as String;
     idAccount = await SecureStorage().read("idAccount") as String;
   }
-  void fetchpoint() => apigetpoint(token).then((value) => setState(() {
+  void fetchpoint() =>  AccountDetail().apigetpoint(token).then((value) => setState(() {
         pointid = value.point;
         iduser = value.id;
         idname = value.name;

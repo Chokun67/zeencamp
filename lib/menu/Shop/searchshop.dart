@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:zeencamp/application/storeService/storeservice.dart';
 import 'package:zeencamp/background.dart';
 
-import '../../domain/allstore.dart';
+import '../../domain/dmstore/allstore.dart';
 import '../../domain/pvd_data.dart';
 import 'shopdetail.dart';
 

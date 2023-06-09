@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/storeService/storeservice.dart';
-import 'package:zeencamp/domain/detailshopdm.dart';
+import 'package:zeencamp/domain/dmstore/detailshopdm.dart';
 
 import '../../domain/pvd_data.dart';
 

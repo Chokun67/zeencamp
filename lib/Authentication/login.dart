@@ -111,8 +111,8 @@ class _LoginpageState extends State<Loginpage> {
           validator: (value) {
             if (value!.isEmpty) {
               return 'กรุณากรอกค่า';
-            } else if (value.length < 8) {
-              return 'ต้องมีความยาวมากกว่าเท่ากับ 8 ตัวอักษร';
+            } else if (!isvalid) {
+              return 'กรุณาตรวจสอบความถูกต้อง';
             }
             return null;
           },
@@ -230,7 +230,8 @@ class _LoginpageState extends State<Loginpage> {
               {
                 showAlertBox(
                     context, 'แจ้งเตือน', 'ชื่อผู้ใช้หรือรหัสผ่านพิดพลาด'),
-                isvalid = false
+                isvalid = false,
+                if (_formKey.currentState!.validate()){}
               }
           });
     }

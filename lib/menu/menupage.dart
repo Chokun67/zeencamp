@@ -8,7 +8,7 @@ import 'package:zeencamp/menu/Tranfer/tranfer.dart';
 // import 'package:provider/provider.dart';
 // import 'package:zeencamp/domain/pvd_data.dart';
 import 'package:zeencamp/securestorage.dart';
-import 'package:zeencamp/shop/setting.dart';
+import 'package:zeencamp/shop/setting/setting.dart';
 import '../background.dart';
 
 class Menu extends StatefulWidget {
@@ -29,7 +29,7 @@ class _MenuState extends State<Menu> {
   void initState() {
     super.initState();
     getData().then((_) {
-      apigetpoint(token).then((value) => setState(() {
+      AccountDetail().apigetpoint(token).then((value) => setState(() {
             pointid = value.point;
             iduser = value.id;
             idname = value.name;
@@ -126,7 +126,7 @@ class _MenuState extends State<Menu> {
                   MaterialPageRoute(
                       builder: (context) => widgetOptions[index]));
               setState(() {
-                apigetpoint(token).then((value) => setState(() {
+                 AccountDetail().apigetpoint(token).then((value) => setState(() {
                       pointid = value.point;
                     }));
               });
