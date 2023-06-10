@@ -8,7 +8,7 @@ import '../../domain/dmaccount/personal.dart';
 import '../../domain/dmaccount/register.dart' show Register;
 
 class AccountService {
-  var ipLogin = "13.214.174.255:17003";
+  var ipLogin = "13.214.128.220:17003";
 
   Future<Customer?> apiLogin(String login, String pswd) async {
     var response = await http.post(

@@ -12,12 +12,12 @@ class Shopdetail extends StatelessWidget {
   final String idshop;
   final String nameshop;
 
-  final String ip = "13.229.147.213";
+  final String ip = "13.214.128.220";
   @override
   Widget build(BuildContext context) {
     final heightsize = MediaQuery.of(context).size.height;
     final widthsize = MediaQuery.of(context).size.width;
-    
+
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<Customer>(
@@ -46,10 +46,21 @@ class Shopdetail extends StatelessWidget {
                     width: widthsize,
                     height: heightsize * 0.45,
                     decoration: const BoxDecoration(color: Colors.amber),
-                    child: Image.network(
-                      'http://$ip:17003/api/v1/image/${customerData.storePicture}',
-                      fit: BoxFit.cover,
-                    ),
+                    child: customerData.storePicture.isNotEmpty
+                        ? Image.network(
+                            'http://$ip:17003/api/v1/image/${customerData.storePicture}',
+                            fit: BoxFit.cover,
+                          )
+                        : Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text("ไม่มีรูปภาพ",
+                                  style: TextStyle(
+                                      fontSize: heightsize * 0.05,
+                                      fontWeight: FontWeight.bold)),
+                              SizedBox(height: heightsize * 0.1)
+                            ],
+                          ),
                   ),
                   Positioned(
                     top: heightsize * 0.28,

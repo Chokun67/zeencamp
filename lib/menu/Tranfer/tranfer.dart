@@ -231,7 +231,8 @@ class _TranFerState extends State<TranFer> {
         validator: (value) {
           if (value!.isEmpty) {
             return 'กรุณากรอกค่า';
-          } else if (value.length != 9 ||
+          } else if (
+            // value.length != 9 ||
               !RegExp(r'^[0-9]+$').hasMatch(value)) {
             return 'รูปแบบข้อความไม่ถูกต้อง';
           } else if (value == idAccount) {

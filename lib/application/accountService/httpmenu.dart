@@ -8,7 +8,7 @@ import 'package:zeencamp/domain/dmaccount/userdm.dart';
 
 class AccountDetail {
 
-  var ip = "13.214.174.255";
+  var ip = "13.214.128.220";
 
   Future<UserModel> apigetpoint(String token) async {
 

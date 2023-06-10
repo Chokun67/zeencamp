@@ -7,7 +7,7 @@ import 'dart:convert';
 import '../../domain/dmtranfer/vldtranfer.dart';
 
 class TranferService {
-  var ipLogin = "13.214.174.255:17003";
+  var ipLogin = "13.214.128.220:17003";
 
   Future<Tranfer?> apiTranfer(String idTo, int pointTo, String token) async {
     // return const Customer(code: 200, accessToken: "123");

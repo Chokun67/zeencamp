@@ -45,7 +45,7 @@ class _ChangePasswordState extends State<ChangePassword> {
         height: heightsize * 0.7,
         child: Form(
           key: _formKey,
-          child: Column(
+          child: const Column(
               crossAxisAlignment: CrossAxisAlignment.start, children: []),
         ),
       );

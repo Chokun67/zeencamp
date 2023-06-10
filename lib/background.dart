@@ -39,22 +39,26 @@ class MyStyle {
         Container(
           width: widthsize,
           height: heightsize,
-          color: const Color(0xFFFFD600),
-          child: Column(
-            children: [
-              Container(
-                height: heightsize * 0.175,
+          color: const Color(0xFF4A4A4A)),
+        Container(
+          width: widthsize,
+          height: heightsize*0.5,
+          color: const Color(0xFFFFD600)),
+        Column(
+          children: [
+            Container(
+              height: heightsize * 0.175,
+            ),
+            Container(
+              width: widthsize,
+              height: heightsize - heightsize * 0.3,
+              decoration: const BoxDecoration(
+                borderRadius:
+                    BorderRadius.only(topLeft: Radius.circular(90)),
+                color: Color(0xFF4A4A4A),
               ),
-              Container(
-                width: widthsize,
-                height: heightsize - heightsize * 0.255,
-                decoration: const BoxDecoration(
-                  borderRadius: BorderRadius.only(topLeft: Radius.circular(90)),
-                  color: Color(0xFF4A4A4A),
-                ),
-              )
-            ],
-          ),
+            )
+          ],
         ),
         Positioned(
             top: widthsize * 0.065,
@@ -105,7 +109,8 @@ void showAlertBox(BuildContext context, String title, String content) {
   );
 }
 
-void showAlertDecide(BuildContext context, {String title = '', String content = '', Function? okAction}) {
+void showAlertDecide(BuildContext context,
+    {String title = '', String content = '', Function? okAction}) {
   showDialog<void>(
     context: context,
     builder: (BuildContext context) {
@@ -133,5 +138,3 @@ void showAlertDecide(BuildContext context, {String title = '', String content = 
     },
   );
 }
-
-

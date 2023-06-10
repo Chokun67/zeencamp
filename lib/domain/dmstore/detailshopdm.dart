@@ -4,6 +4,7 @@ class Store {
   final int price;
   final int exchange;
   final int receive;
+  // final; int id;
 
   Store({
     required this.nameMenu,
