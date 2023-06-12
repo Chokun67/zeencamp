@@ -4,7 +4,7 @@ class Store {
   final int price;
   final int exchange;
   final int receive;
-  // final; int id;
+  final String id;
 
   Store({
     required this.nameMenu,
@@ -12,6 +12,7 @@ class Store {
     required this.price,
     required this.exchange,
     required this.receive,
+    required this.id
   });
 
   factory Store.fromJson(Map<String, dynamic> json) {
@@ -21,6 +22,7 @@ class Store {
       price: json['price'],
       exchange: json['exchange'],
       receive: json['receive'],
+      id: json['id']
     );
   }
 }

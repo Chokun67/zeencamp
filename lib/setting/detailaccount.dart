@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:zeencamp/application/accountService/accountservice.dart';
-import '../../background.dart';
-import '../../securestorage.dart';
+
+import '../Authentication/login.dart';
+import '../background.dart';
+import '../securestorage.dart';
 
 class DetailAccount extends StatefulWidget {
   const DetailAccount({super.key});
@@ -39,7 +41,7 @@ class _DetailAccountState extends State<DetailAccount> {
                 })
               }
             else
-              {print("error")}
+              {idname = "dont have"}
           });
     });
   }
@@ -51,7 +53,8 @@ class _DetailAccountState extends State<DetailAccount> {
 
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
@@ -97,7 +100,8 @@ class _DetailAccountState extends State<DetailAccount> {
             Text("sex", style: styletype(heightsize)),
             textfieldsex(heightsize, widthsize),
             SizedBox(height: heightsize * 0.03),
-            editButton(heightsize, widthsize, context)
+            editButton(heightsize, widthsize, context),
+            deleteButton(heightsize, widthsize)
           ]),
         ),
       );
@@ -218,10 +222,46 @@ class _DetailAccountState extends State<DetailAccount> {
         ),
       );
 
+  Widget deleteButton(double heightsize, double widthsize) => SizedBox(
+        width: widthsize * 0.4,
+        height: heightsize * 0.07,
+        child: ElevatedButton(
+          onPressed: (){
+            showAlertDecide(context,
+              title: 'แจ้งเตือน', content: 'คุณกำลังจะลบฐัญชีใช่หรือไม่', okAction: () {
+            deleteAccount(context);
+          });
+          },
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4A4A4A),
+              side: const BorderSide(
+                color: Color(0xFFAD6800),
+                width: 2,
+              ),
+              shape: const StadiumBorder()),
+          child: Text(
+            "ลบบัญชี",
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: heightsize * 0.025),
+          ),
+        ),
+      );
+
   TextStyle styletype(heightsize) {
     return TextStyle(
         fontSize: heightsize * 0.02,
         color: Colors.white,
         fontWeight: FontWeight.bold);
+  }
+
+  void deleteAccount(context) {
+    AccountService().deleteAccount(token);
+    Navigator.pushAndRemoveUntil(
+      context,
+      MaterialPageRoute(builder: (context) => const Loginpage()),
+      (route) => false,
+    );
   }
 }

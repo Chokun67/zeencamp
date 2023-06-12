@@ -1,11 +1,11 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import '../../Authentication/login.dart';
-import '../../application/accountService/httpmenu.dart';
-import '../../application/storeService/storeservice.dart';
-import '../../background.dart';
-import '../../securestorage.dart';
+import '../Authentication/login.dart';
+import '../application/accountService/httpmenu.dart';
+import '../application/storeService/storeservice.dart';
+import '../background.dart';
+import '../securestorage.dart';
 
 class ChangeId extends StatefulWidget {
   const ChangeId({super.key});
@@ -58,7 +58,7 @@ class _ChangeIdState extends State<ChangeId> {
 
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
@@ -179,8 +179,7 @@ class _ChangeIdState extends State<ChangeId> {
   void btnsetpicture() {
     if (file != null) {
       StoresService()
-          .setStoreimage(token, bit)
-          .then((value) => print(value.message));
+          .setStoreimage(token, bit);
     }
   }
 }

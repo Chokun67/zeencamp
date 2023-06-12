@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../background.dart';
+import '../background.dart';
 
 class ChangePassword extends StatefulWidget {
   const ChangePassword({super.key});
@@ -13,7 +13,7 @@ class _ChangePasswordState extends State<ChangePassword> {
   final _formKey = GlobalKey<FormState>();
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(

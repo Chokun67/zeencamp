@@ -24,7 +24,7 @@ class _QRScreenState extends State<QRScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     idAccount = context.read<AppData>().idAccount;
     token = context.read<AppData>().token;

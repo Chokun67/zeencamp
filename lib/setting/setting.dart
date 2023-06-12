@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:zeencamp/Authentication/login.dart';
 import 'package:zeencamp/background.dart';
 
-import '../../securestorage.dart';
+import '../securestorage.dart';
 import 'changeid.dart';
 import 'detailaccount.dart';
 
@@ -17,7 +17,7 @@ class SettingShop extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(

@@ -2,28 +2,49 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:zeencamp/application/storeService/storeservice.dart';
 import 'package:zeencamp/domain/dmstore/detailshopdm.dart';
+import 'package:zeencamp/shop/givepoint.dart';
 
 import '../../application/accountService/accountservice.dart';
-import '../../domain/pvd_data.dart';
+import '../domain/pvd_data.dart';
+import '../securestorage.dart';
+import 'addmenu.dart';
 
-class Shopdetail extends StatelessWidget {
-  Shopdetail({Key? key, required this.idshop, required this.nameshop})
+class EditShop extends StatefulWidget {
+  const EditShop({Key? key, required this.idshop, required this.nameshop})
       : super(key: key);
 
   final String idshop;
   final String nameshop;
-  
+
+  @override
+  State<EditShop> createState() => _EditShopState();
+}
+
+class _EditShopState extends State<EditShop> {
   final String ip = AccountService().ipAddress;
+  // final token = SecureStorage().read("token") as String;
+  var token = "";
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  Future<void> getData() async {
+    token = await SecureStorage().read("token") as String;
+  }
+
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
+    final heightsize = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
 
     return Scaffold(
       body: SafeArea(
         child: FutureBuilder<Customer>(
-          future: StoresService()
-              .fetchStoreData(context.read<AppData>().token, idshop),
+          future: StoresService().fetchStoreData(
+              token = context.read<AppData>().token, widget.idshop),
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
               return const Center(
@@ -35,7 +56,6 @@ class Shopdetail extends StatelessWidget {
               );
             } else {
               final customerData = snapshot.data!;
-
               return Stack(
                 children: [
                   Container(
@@ -75,7 +95,8 @@ class Shopdetail extends StatelessWidget {
                       ),
                       child: Column(
                         children: [
-                          positionShop(widthsize, heightsize, nameshop, idshop),
+                          positionShop(widthsize, heightsize, widget.nameshop,
+                              widget.idshop),
                           detailMenu(widthsize, heightsize, context,
                               customerData.menuStores),
                         ],
@@ -90,6 +111,13 @@ class Shopdetail extends StatelessWidget {
                       child: Image.asset('images/back.png'),
                     ),
                   ),
+                  Positioned(
+                      top: widthsize * 0.05,
+                      right: widthsize * 0.03,
+                      child: Column(children: [
+                        btnedit(heightsize, widthsize),
+                        btnaddmenu(heightsize, widthsize, context),
+                      ]))
                 ],
               );
             }
@@ -198,18 +226,19 @@ class Shopdetail extends StatelessWidget {
               height: heightsize * 0.16,
               child: Row(
                 children: [
-                  detailPicture(widthsize, heightsize, menuStore?.pictures),
+                  detailPicture(widthsize, heightsize, menuStore?.pictures,menuStore!.id,menuStore.receive,),
                   SizedBox(
                     width: widthsize * 0.05,
                   ),
                   detailPrice(
                     widthsize,
                     heightsize,
-                    menuStore?.nameMenu,
-                    menuStore?.price,
-                    menuStore?.receive,
-                    menuStore?.exchange,
+                    menuStore.nameMenu,
+                    menuStore.price,
+                    menuStore.receive,
+                    menuStore.exchange,
                   ),
+                  btndelete(heightsize, widthsize, menuStore.id)
                 ],
               ),
             );
@@ -219,17 +248,23 @@ class Shopdetail extends StatelessWidget {
     );
   }
 
-  Widget detailPicture(double widthsize, double heightsize, String? pictures) {
-    return Container(
-      width: widthsize * 0.3,
-      decoration: BoxDecoration(
-        borderRadius: const BorderRadius.all(Radius.circular(15)),
-        border: Border.all(color: const Color(0xFF000000), width: 4),
-      ),
-      child: Image.network(
-        'http://$ip:17003/api/v1/image/$pictures',
-        fit: BoxFit.cover,
-        // ปรับขนาดภาพให้พอดีกับขนาด Container
+  Widget detailPicture(double widthsize, double heightsize, String? pictures,String idMenu,int price) {
+    return InkWell(
+      onTap: () {
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => GivePoint(idMenu: idMenu, pointMenu: price)));
+      },
+      child: Container(
+        width: widthsize * 0.3,
+        decoration: BoxDecoration(
+          borderRadius: const BorderRadius.all(Radius.circular(15)),
+          border: Border.all(color: const Color(0xFF000000), width: 4),
+        ),
+        child: Image.network(
+          'http://$ip:17003/api/v1/image/$pictures',
+          fit: BoxFit.cover,
+          // ปรับขนาดภาพให้พอดีกับขนาด Container
+        ),
       ),
     );
   }
@@ -260,4 +295,73 @@ class Shopdetail extends StatelessWidget {
       ),
     );
   }
+
+  Widget btnedit(heightsize, widthsize) => SizedBox(
+        width: widthsize * 0.3,
+        height: heightsize * 0.04,
+        child: ElevatedButton(
+          onPressed: () {},
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4A4A4A),
+              side: const BorderSide(
+                color: Color(0xFFAD6800),
+                width: 1,
+              ),
+              shape: const StadiumBorder()),
+          child: Text(
+            "แก้ไขรูป",
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: heightsize * 0.02),
+          ),
+        ),
+      );
+
+  Widget btnaddmenu(heightsize, widthsize, context) => SizedBox(
+        width: widthsize * 0.3,
+        height: heightsize * 0.04,
+        child: ElevatedButton(
+          onPressed: () async {
+            await Navigator.push(context,
+                MaterialPageRoute(builder: (context) => const AddMenuItem()));
+            setState(() {});
+          },
+          style: ElevatedButton.styleFrom(
+              backgroundColor: const Color(0xFF4A4A4A),
+              side: const BorderSide(
+                color: Color(0xFFAD6800),
+                width: 1,
+              ),
+              shape: const StadiumBorder()),
+          child: Text(
+            "เพิ่มเมนู",
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: heightsize * 0.02),
+          ),
+        ),
+      );
+
+  Widget btndelete(heightsize, widthsize, idMenu) => Container(
+        margin: EdgeInsets.only(left: widthsize * 0.01),
+        width: widthsize * 0.05,
+        height: heightsize * 0.04,
+        child: ElevatedButton(
+          onPressed: () async {
+            await StoresService().deleteMenu(token, idMenu);
+            setState(() {});
+          },
+          style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red, shape: const StadiumBorder()),
+          child: Text(
+            "x",
+            style: TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+                fontSize: heightsize * 0.01),
+          ),
+        ),
+      );
 }

@@ -6,17 +6,19 @@ import 'dart:convert';
 import '../../domain/dmaccount/customer.dart';
 import '../../domain/dmaccount/personal.dart';
 import '../../domain/dmaccount/register.dart' show Register;
+import '../../domain/dmstore/storecheck.dart';
 
 class AccountService {
-  var ipLogin = "13.214.128.220:17003";
+  var ipAddress = "18.140.244.160";
+  var port = "17003";
 
   Future<Customer?> apiLogin(String login, String pswd) async {
     var response = await http.post(
-        Uri.parse('http://$ipLogin/api/v1/member/login'),
+        Uri.parse('http://$ipAddress:$port/api/v1/member/login'),
         headers: <String, String>{'content-type': 'application/json'},
         body:
             jsonEncode(<String, String>{'username': login, 'password': pswd}));
-    print(response.statusCode);
+  
     if (response.statusCode == 200) {
       return Customer.fromJson(jsonDecode(response.body));
     } else {
@@ -26,9 +28,7 @@ class AccountService {
 
   Future<Register?> apiRegister(String login, String username, String pswd,
       String date, String gender) async {
-    print(date);
-
-    var url = Uri.parse('http://$ipLogin/api/v1/member/register');
+    var url = Uri.parse('http://$ipAddress:$port/api/v1/member/register');
     var headers = {'Content-Type': 'application/json'};
 
     var body = jsonEncode({
@@ -40,9 +40,11 @@ class AccountService {
     });
 
     var response = await http.post(url, headers: headers, body: body);
-    print(response.statusCode);
+
     if (response.statusCode == 200) {
       return Register.fromJson(jsonDecode(response.body));
+    } else if (response.statusCode == 409) {
+      return null;
     } else {
       return null;
     }
@@ -50,17 +52,60 @@ class AccountService {
 
   Future<Personal?> apigetpersonal(String token) async {
     var response = await http.get(
-      Uri.parse('http://$ipLogin/api/v1/member/get-personal-data'),
+      Uri.parse('http://$ipAddress:$port/api/v1/member/get-personal-data'),
       headers: {
         HttpHeaders.authorizationHeader: 'Bearer $token',
       },
     );
-    print(response.statusCode);
+
     var decodeutf8 = utf8.decode(response.bodyBytes);
     if (response.statusCode == 200) {
       return Personal.fromJson(jsonDecode(decodeutf8));
     } else {
       return null;
+    }
+  }
+
+  Future<Check> deleteAccount(String token) async {
+    var response = await http.delete(
+      Uri.parse('http://$ipAddress:$port/api/v1/member/delete-account'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      },
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return Check.fromJson(jsonDecode(response.body));
+    }
+    if (response.statusCode == 404) {
+      return Check(code: 404, message: "สำเร็จมั้ง");
+    } else {
+      throw Exception(
+          'เกิดข้อผิดพลาดในการร้องขอข้อมูล: ${response.statusCode}');
+    }
+  }
+
+  Future<Check> forgotpassword(String token, String username, String birthday,
+      String newpassword) async {
+    var response = await http.put(
+        Uri.parse('http://$ipAddress:$port/api/v1/member/delete-account'),
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+        },
+        body: jsonEncode(<String, dynamic>{
+          'username': username,
+          'birthday': birthday,
+          'newPassword': newpassword
+        }));
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      return Check.fromJson(jsonDecode(response.body));
+    }
+    if (response.statusCode == 404) {
+      return Check(code: 404, message: "unsuccessful");
+    } else {
+      throw Exception(
+          'เกิดข้อผิดพลาดในการร้องขอข้อมูล: ${response.statusCode}');
     }
   }
 }

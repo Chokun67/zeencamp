@@ -90,9 +90,7 @@ class _RegisterpageState extends State<Registerpage> {
                   textfieldconfirm(heightsize, widthsize),
                   Row(children: [
                     dateSelect(heightsize, widthsize, context),
-                    SizedBox(
-                      width: widthsize * 0.06,
-                    ),
+                    SizedBox(width: widthsize * 0.06),
                     const Gender()
                   ]),
                   SizedBox(height: heightsize * 0.005),
@@ -245,8 +243,12 @@ class _RegisterpageState extends State<Registerpage> {
     if (_formKey.currentState!.validate()) {
       if (_ctrlpswd.text == _ctrlconfirm.text) {
         AccountService()
-            .apiRegister(_ctrluser.text, _ctrlusername.text, _ctrlpswd.text,
-                DateFormat('yyyy-MM-dd').format(selectedDate), dropdownValuegender)
+            .apiRegister(
+                _ctrluser.text,
+                _ctrlusername.text,
+                _ctrlpswd.text,
+                DateFormat('yyyy-MM-dd').format(selectedDate),
+                dropdownValuegender)
             .then((value) => {
                   if (value != null)
                     {
@@ -254,14 +256,16 @@ class _RegisterpageState extends State<Registerpage> {
                         context,
                         MaterialPageRoute(builder: (context) => const Menu()),
                       ),
-                    SecureStorage().write('token', value.accessToken),
-                    SecureStorage().write('idAccount', value.idAccount),
-                    context.read<AppData>().token = value.accessToken,
-                    context.read<AppData>().idAccount = value.idAccount,
+                      SecureStorage().write('token', value.accessToken),
+                      SecureStorage().write('idAccount', value.idAccount),
+                      context.read<AppData>().token = value.accessToken,
+                      context.read<AppData>().idAccount = value.idAccount,
+                    }else{
+                      showAlertBox(context, 'แจ้งเตือน', 'email หรือ username มีผู้ใช้ไปแล้ว')
                     }
                 });
       } else {
-        showAlertBox(context, 'แจ้งเตือน', 'โปรดตรวจสอบรหัสผ่าน');
+        showAlertBox(context, 'แจ้งเตือน', 'โปรดตรวจสอบรหัสผ่านและการยืนยันรหัสผ่านให้ถูกต้อง');
       }
     }
   }
@@ -299,23 +303,23 @@ class _RegisterpageState extends State<Registerpage> {
       Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         const Text("Select birthday"),
         ElevatedButton(
-            onPressed: () async {
-              final DateTime? dateTime = await showDatePicker(
-                  context: context,
-                  initialDate: selectedDate,
-                  firstDate: DateTime(1940),
-                  lastDate: DateTime.now());
-              if (dateTime != null) {
-                setState(() {
-                  selectedDate = dateTime;
-                });
-              }
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: const Color(0xFF4A4A4A),
-              ),
-            child: const Text("choose Date"),
-            )
+          onPressed: () async {
+            final DateTime? dateTime = await showDatePicker(
+                context: context,
+                initialDate: selectedDate,
+                firstDate: DateTime(1940),
+                lastDate: DateTime.now());
+            if (dateTime != null) {
+              setState(() {
+                selectedDate = dateTime;
+              });
+            }
+          },
+          style: ElevatedButton.styleFrom(
+            backgroundColor: const Color(0xFF4A4A4A),
+          ),
+          child: const Text("choose Date"),
+        )
       ]);
 } // จุดสิ้นสุด stateful
 

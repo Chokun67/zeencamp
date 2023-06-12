@@ -8,7 +8,7 @@ import 'package:zeencamp/menu/Tranfer/tranfer.dart';
 // import 'package:provider/provider.dart';
 // import 'package:zeencamp/domain/pvd_data.dart';
 import 'package:zeencamp/securestorage.dart';
-import 'package:zeencamp/shop/setting/setting.dart';
+import 'package:zeencamp/setting/setting.dart';
 import '../background.dart';
 
 class Menu extends StatefulWidget {
@@ -51,7 +51,7 @@ class _MenuState extends State<Menu> {
   ];
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {

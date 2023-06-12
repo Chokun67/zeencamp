@@ -14,7 +14,8 @@ class _SearchTypeState extends State<SearchType> {
   Color graycolor = const Color(0xffD9D9D9);
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SingleChildScrollView(
@@ -27,7 +28,8 @@ class _SearchTypeState extends State<SearchType> {
             children: [
               Column(
                 children: [
-                  MyStyle().buildBackground(widthsize, heightsize,context,"ร้านค้า"),
+                  MyStyle().buildBackground(
+                      widthsize, heightsize, context, "ร้านค้า"),
                   fieldSearchType(widthsize, heightsize),
                   GridView.count(
                     crossAxisSpacing: widthsize * 0.02,
@@ -37,6 +39,7 @@ class _SearchTypeState extends State<SearchType> {
                     shrinkWrap: true,
                     padding: EdgeInsets.all(widthsize * 0.05),
                     children: [
+                      typeAll(widthsize),
                       typeFood(widthsize),
                       typeDrink(widthsize),
                       typeSweets(widthsize)
@@ -68,6 +71,30 @@ class _SearchTypeState extends State<SearchType> {
               hintText: "search"),
         ),
       );
+  Widget typeAll(widthsize) => InkWell(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(15),
+            ),
+            color: graycolor,
+          ),
+          child: Center(
+            child: Text(
+              "ทั้งหมด",
+              style: TextStyle(fontSize: widthsize * 0.08),
+            ),
+          ),
+        ),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SearchShop(
+                        category: 0,
+                      )));
+        },
+      );
 
   Widget typeFood(widthsize) => InkWell(
         child: Container(
@@ -85,38 +112,62 @@ class _SearchTypeState extends State<SearchType> {
           ),
         ),
         onTap: () {
-          Navigator.push(context,
-              MaterialPageRoute(builder: (context) => const SearchShop()));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SearchShop(
+                        category: 3,
+                      )));
         },
       );
 
-  Widget typeDrink(widthsize) => Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(15),
+  Widget typeDrink(widthsize) => InkWell(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(15),
+            ),
+            color: graycolor,
           ),
-          color: graycolor,
-        ),
-        child: Center(
-          child: Text(
-            "เครื่องดื่ม",
-            style: TextStyle(fontSize: widthsize * 0.08),
+          child: Center(
+            child: Text(
+              "เครื่องดื่ม",
+              style: TextStyle(fontSize: widthsize * 0.08),
+            ),
           ),
         ),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SearchShop(
+                        category: 1,
+                      )));
+        },
       );
 
-  Widget typeSweets(widthsize) => Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.all(
-            Radius.circular(15),
+  Widget typeSweets(widthsize) => InkWell(
+        child: Container(
+          decoration: BoxDecoration(
+            borderRadius: const BorderRadius.all(
+              Radius.circular(15),
+            ),
+            color: graycolor,
           ),
-          color: graycolor,
-        ),
-        child: Center(
-          child: Text(
-            "ขนม",
-            style: TextStyle(fontSize: widthsize * 0.08),
+          child: Center(
+            child: Text(
+              "ขนม",
+              style: TextStyle(fontSize: widthsize * 0.08),
+            ),
           ),
         ),
+        onTap: () {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => const SearchShop(
+                        category: 2,
+                      )));
+        },
       );
 }

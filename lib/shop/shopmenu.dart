@@ -4,8 +4,9 @@ import 'package:zeencamp/application/accountService/httpmenu.dart';
 import 'package:zeencamp/menu/Tranfer/history.dart';
 import 'package:zeencamp/menu/Tranfer/tranfer.dart';
 import 'package:zeencamp/shop/buypoint.dart';
+import 'package:zeencamp/shop/editshop.dart';
 import 'package:zeencamp/shop/qrgenerate.dart';
-import 'package:zeencamp/shop/setting/setting.dart';
+import 'package:zeencamp/setting/setting.dart';
 
 import '../background.dart';
 import '../securestorage.dart';
@@ -48,7 +49,7 @@ class _ShopMenuState extends State<ShopMenu> {
 
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return WillPopScope(
       onWillPop: () async {
@@ -86,18 +87,22 @@ class _ShopMenuState extends State<ShopMenu> {
                       ],
                     ),
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(widthsize * 0.1),
-                    child: Column(
-                      children: [
-                        buyPoint(widthsize, heightsize),
-                        SizedBox(height: heightsize * 0.04),
-                        tranFer(widthsize, heightsize),
-                        SizedBox(height: heightsize * 0.04),
-                        createQR(widthsize, heightsize),
-                        SizedBox(height: heightsize * 0.04),
-                        historyPoint(widthsize, heightsize)
-                      ],
+                  Container(
+                    padding: EdgeInsets.only(top: widthsize*0.05,left: widthsize*0.1,right: widthsize*0.1),
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          buyPoint(widthsize, heightsize),
+                          SizedBox(height: heightsize * 0.025),
+                          tranFer(widthsize, heightsize),
+                          SizedBox(height: heightsize * 0.025),
+                          createQR(widthsize, heightsize),
+                          SizedBox(height: heightsize * 0.025),
+                          historyPoint(widthsize, heightsize),
+                          SizedBox(height: heightsize * 0.025),
+                          editShop(widthsize, heightsize),
+                        ],
+                      ),
                     ),
                   ),
                 ],
@@ -226,6 +231,21 @@ class _ShopMenuState extends State<ShopMenu> {
           child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [Text("Point History", style: styleBlack(heightsize))]),
+        ),
+      );
+
+  Widget editShop(widthsize, heightsize) => InkWell(
+        onTap: () => Navigator.push(context,
+            MaterialPageRoute(builder: (context) => EditShop(idshop: idAccount,nameshop: idname))),
+        child: Container(
+          decoration: const BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+            color: Color(0xFFFFFFFF),
+          ),
+          height: heightsize * 0.08,
+          child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [Text("แก้ไขร้านค้า", style: styleBlack(heightsize))]),
         ),
       );
 

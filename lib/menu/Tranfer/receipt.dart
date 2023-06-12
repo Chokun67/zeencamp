@@ -27,7 +27,7 @@ class Receipt extends StatelessWidget {
       fontWeight: FontWeight.w500);
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
@@ -232,7 +232,7 @@ class Receipt extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(
-                      "จำนวนเงิน",
+                      "จำนวนPoint",
                       style: stylewhite(heightsize),
                     ),
                     Text(

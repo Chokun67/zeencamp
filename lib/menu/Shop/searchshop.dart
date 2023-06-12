@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:zeencamp/application/storeService/storeservice.dart';
 import 'package:zeencamp/background.dart';
-
 import '../../domain/dmstore/allstore.dart';
-import '../../domain/pvd_data.dart';
+import '../../securestorage.dart';
 import 'shopdetail.dart';
 
 class SearchShop extends StatefulWidget {
-  const SearchShop({super.key});
+  const SearchShop({
+    Key? key,
+    required this.category,
+  }) : super(key: key);
+  final int category;
 
   @override
   State<SearchShop> createState() => _SearchShopState();
@@ -16,6 +18,7 @@ class SearchShop extends StatefulWidget {
 
 class _SearchShopState extends State<SearchShop> {
   List<Allstore> stores = [];
+  List<Allstore> filteredList = [];
   var token = "";
   @override
   initState() {
@@ -26,18 +29,37 @@ class _SearchShopState extends State<SearchShop> {
   }
 
   void fetchData() async {
-    token = context.read<AppData>().token;
-    List<Allstore> fetchedStores = await StoresService().getStores(token);
+    int category = widget.category;
+    token = await SecureStorage().read("token") as String;
+    // List<Allstore> fetchedStores = await StoresService().getStores(token);
+    late List<Allstore> fetchedStores;
+    if (category > 0) {
+      fetchedStores = await StoresService().getmenucategory(token, category);
+    } else {
+      fetchedStores = await StoresService().getStores(token);
+    }
     setState(() {
       stores = fetchedStores;
     });
   }
 
+  void filterData(String query) {
+    setState(() {
+      filteredList = stores
+          .where(
+              (store) => store.name.toLowerCase().contains(query.toLowerCase()))
+          .toList();
+    });
+  }
+
   final _ctrlSearch = TextEditingController();
+  
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height -
+        MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
+    
     return Scaffold(
       body: SingleChildScrollView(
         child: SafeArea(
@@ -49,7 +71,8 @@ class _SearchShopState extends State<SearchShop> {
               children: [
                 Column(
                   children: [
-                    MyStyle().buildBackground(widthsize, heightsize, context,"ร้านค้า"),
+                    MyStyle().buildBackground(
+                        widthsize, heightsize, context, "ร้านค้า"),
                     fieldSearchType(widthsize, heightsize),
                     Container(
                         color: const Color(0xFF4A4A4A),
@@ -73,6 +96,7 @@ class _SearchShopState extends State<SearchShop> {
         width: widthsize * 0.8,
         height: heightsize * 0.06,
         child: TextField(
+          onChanged: (value) => filterData(value),
           controller: _ctrlSearch,
           decoration: InputDecoration(
               border: OutlineInputBorder(
@@ -89,18 +113,24 @@ class _SearchShopState extends State<SearchShop> {
         child: Column(
           children: [
             ListView.builder(
-              itemCount: stores.length,
+              itemCount: _ctrlSearch.text.isEmpty
+                  ? stores.length
+                  : filteredList.length,
               padding: EdgeInsets.all(widthsize * 0.04),
               physics: const ScrollPhysics(parent: null),
               shrinkWrap: true,
               itemBuilder: (BuildContext context, int index) {
+                List<Allstore> displayList = _ctrlSearch.text.isEmpty
+      ? stores
+      : filteredList;
                 return InkWell(
                   onTap: () => {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
                             builder: (context) => Shopdetail(
-                                  idshop: stores[index].id,nameshop: stores[index].name,
+                                  idshop: displayList[index].id,
+                                  nameshop: displayList[index].name,
                                 )))
                   },
                   child: Container(
@@ -116,14 +146,14 @@ class _SearchShopState extends State<SearchShop> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "ร้าน ${stores[index].name}",
+                            "ร้าน ${displayList[index].name}",
                             style: TextStyle(
                                 color: const Color(0xFFEB3F3F),
                                 fontSize: heightsize * 0.032,
                                 fontWeight: FontWeight.bold),
                           ),
                           Text(
-                            "id ${stores[index].id}",
+                            "id ${displayList[index].id}",
                             style: TextStyle(
                                 color: const Color(0xFFEB3F3F),
                                 fontSize: heightsize * 0.022,

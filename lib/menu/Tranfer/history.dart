@@ -49,20 +49,29 @@ class _HistoryPointState extends State<HistoryPoint> {
 
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SafeArea(
           child: Stack(
         children: [
+          Container(width: widthsize,
+            height: heightsize,
+            color: const Color(0xFF4A4A4A)),
           Container(
             width: widthsize,
-            height: heightsize,
+            height: heightsize*0.5,
             color: const Color(0xFFFFD600),
             child: Column(
               children: [
                 titleMoney(widthsize, heightsize),
-                Container(
+              ],
+            ),
+          ),
+          Positioned(
+            top: heightsize*0.28,
+            child: Column(children: [
+            Container(
                     width: widthsize,
                     height: heightsize * 0.1,
                     decoration: const BoxDecoration(
@@ -74,11 +83,9 @@ class _HistoryPointState extends State<HistoryPoint> {
                 Container(
                     color: const Color(0xFF4A4A4A),
                     width: widthsize,
-                    height: heightsize - heightsize * 0.284 - heightsize * 0.18,
+                    height: heightsize - heightsize * 0.34,
                     child: historyPointTranfer(widthsize, heightsize, context)),
-              ],
-            ),
-          ),
+          ],)),
           Positioned(
               top: widthsize * 0.055,
               left: widthsize * 0.055,

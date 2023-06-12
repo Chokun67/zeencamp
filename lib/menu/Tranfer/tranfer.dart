@@ -39,7 +39,7 @@ class _TranFerState extends State<TranFer> {
 
   @override
   Widget build(BuildContext context) {
-    final heightsize = MediaQuery.of(context).size.height;
+    final heightsize = MediaQuery.of(context).size.height- MediaQuery.of(context).padding.vertical;
     final widthsize = MediaQuery.of(context).size.width;
     return Scaffold(
       body: SingleChildScrollView(
@@ -256,7 +256,7 @@ class _TranFerState extends State<TranFer> {
           } else if (int.tryParse(value) == null || int.parse(value) <= 0) {
             return 'รูปแบบข้อมูลไม่ถูกต้อง';
           } else if (int.parse(value) > pointid) {
-            return 'จำนวนเงินไม่เพียงพอ';
+            return 'จำนวนPointไม่เพียงพอ';
           }
           return null;
         },

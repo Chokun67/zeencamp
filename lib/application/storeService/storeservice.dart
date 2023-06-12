@@ -3,14 +3,16 @@ import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:zeencamp/domain/dmstore/allstore.dart';
 import 'package:zeencamp/domain/dmstore/detailshopdm.dart';
-
 import '../../domain/dmstore/storecheck.dart';
+import '../accountService/accountservice.dart';
 
 class StoresService {
-  var ipLogin = "13.214.128.220:17003";
+  var ipAddress = AccountService().ipAddress;
+  var port = AccountService().port;
+
   Future<List<Allstore>> getStores(token) async {
     final response = await http.get(
-      Uri.parse('http://$ipLogin/api/v1/stores/get-all-stores'),
+      Uri.parse('http://$ipAddress:$port/api/v1/stores/get-all-stores'),
       headers: {
         'content-type': 'application/json',
         HttpHeaders.authorizationHeader: 'Bearer $token',
@@ -18,9 +20,13 @@ class StoresService {
     );
 
     if (response.statusCode == 200) {
-      final List<dynamic> jsonList = jsonDecode(response.body);
+      var decodeutf8 = utf8.decode(response.bodyBytes);
+      final List<dynamic> jsonList = jsonDecode(decodeutf8);
       List<Allstore> stores =
           jsonList.map((json) => Allstore.fromJson(json)).toList();
+      return stores;
+    } else if (response.statusCode == 404) {
+      List<Allstore> stores = [];
       return stores;
     } else {
       throw Exception('Failed to fetch stores');
@@ -29,23 +35,35 @@ class StoresService {
 
   Future<Customer> fetchStoreData(token, idshop) async {
     final response = await http.get(
-        Uri.parse('http://$ipLogin/api/v1/stores/get-detail-store?id=$idshop'),
+        Uri.parse(
+            'http://$ipAddress:$port/api/v1/stores/get-detail-store?id=$idshop'),
         headers: {
           'content-type': 'application/json',
           HttpHeaders.authorizationHeader: 'Bearer $token',
         });
-
     if (response.statusCode == 200) {
       var decodeutf8 = utf8.decode(response.bodyBytes);
       final Map<String, dynamic> jsonData = jsonDecode(decodeutf8);
 
       final storeData = Customer(
-        storePicture : jsonData.containsKey('storePicture')&&jsonData['storePicture'] != null//ตรวจสอบว่ามีkeyชื่อ storePictureละรูปภาพเป็น null
-      ? jsonData['storePicture']
-      : "",
+        storePicture: jsonData.containsKey('storePicture') &&
+                jsonData['storePicture'] !=
+                    null //ตรวจสอบว่ามีkeyชื่อ storePictureละรูปภาพเป็น null
+            ? jsonData['storePicture']
+            : "",
         menuStores: List<Store>.from(
             jsonData['menuStores'].map((x) => Store.fromJson(x))),
       );
+      return storeData;
+    } else if (response.statusCode == 404) {
+      var decodeutf8 = utf8.decode(response.bodyBytes);
+      final Map<String, dynamic> jsonData = jsonDecode(decodeutf8);
+      final storeData = Customer(
+          storePicture: jsonData.containsKey('storePicture') &&
+                  jsonData['storePicture'] != null
+              ? jsonData['storePicture']
+              : "",
+          menuStores: []);
       return storeData;
     } else {
       throw Exception(
@@ -54,11 +72,12 @@ class StoresService {
   }
 
   Future<Check> apiSettostore(token, idshop) async {
-    final response = await http
-        .put(Uri.parse('http://$ipLogin/api/v1/stores/set-to-store'), headers: {
-      'content-type': 'application/json',
-      HttpHeaders.authorizationHeader: 'Bearer $token',
-    });
+    final response = await http.put(
+        Uri.parse('http://$ipAddress:$port/api/v1/stores/set-to-store'),
+        headers: {
+          'content-type': 'application/json',
+          HttpHeaders.authorizationHeader: 'Bearer $token',
+        });
 
     if (response.statusCode == 200) {
       return Check.fromJson(jsonDecode(response.body));
@@ -69,14 +88,14 @@ class StoresService {
   }
 
   Future<Check> setStoreimage(String token, String picture) async {
-    var uri = Uri.parse('http://$ipLogin/api/v1/stores/upload-picture-stores');
+    var uri = Uri.parse(
+        'http://$ipAddress:$port/api/v1/stores/upload-picture-stores');
 
     var request = http.MultipartRequest('POST', uri);
     request.headers['content-type'] = 'multipart/form-data';
     request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
-    request.files
-        .add(await http.MultipartFile.fromPath('file', picture));
-  
+    request.files.add(await http.MultipartFile.fromPath('file', picture));
+
     var response = await request.send();
 
     if (response.statusCode == 200) {
@@ -86,6 +105,71 @@ class StoresService {
     } else {
       throw Exception(
           'เกิดข้อผิดพลาดในการร้องขอข้อมูล: ${response.statusCode}');
+    }
+  }
+
+  Future<void> addMenuStore(String token, String picture, String name,
+      int price, int exchange, int receive, int category) async {
+    var request = http.MultipartRequest(
+        'POST', Uri.parse('http://$ipAddress:$port/api/v1/stores/upload-menu'));
+    request.headers[HttpHeaders.authorizationHeader] = 'Bearer $token';
+    // กำหนดข้อมูลที่ต้องการส่งเป็นตัวแปร int โดยตรง
+    request.fields['name'] = name;
+    request.fields['price'] = price.toString();
+    request.fields['exchange'] = exchange.toString();
+    request.fields['receive'] = receive.toString();
+    request.fields['category'] = category.toString();
+
+    request.files.add(await http.MultipartFile.fromPath(
+      'file',
+      picture,
+      filename: picture,
+    ));
+
+    var response = await request.send();
+
+    if (response.statusCode == 200) {
+      print('ส่งข้อมูลเรียบร้อย');
+    } else {
+      print('เกิดข้อผิดพลาดในการส่งข้อมูล: ${response.statusCode}');
+    }
+  }
+
+  Future<Check> deleteMenu(String token, String idMenu) async {
+    var response = await http.delete(
+      Uri.parse(
+          'http://$ipAddress:$port/api/v1/stores/delete-menu?idMenu=$idMenu'),
+      headers: {
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      },
+    );
+    if (response.statusCode == 200) {
+      return Check.fromJson(jsonDecode(response.body));
+    } else {
+      return Check(code: response.statusCode, message: "message");
+    }
+  }
+
+  Future<List<Allstore>> getmenucategory(token, category) async {
+    final response = await http.get(
+      Uri.parse(
+          'http://$ipAddress:$port/api/v1/stores/get-menu-category?category=$category'),
+      headers: {
+        'content-type': 'application/json',
+        HttpHeaders.authorizationHeader: 'Bearer $token',
+      },
+    );
+    print(response.statusCode);
+    if (response.statusCode == 200) {
+      final List<dynamic> jsonList = jsonDecode(response.body);
+      List<Allstore> stores =
+          jsonList.map((json) => Allstore.fromJson(json)).toList();
+      return stores;
+    } else if (response.statusCode == 404) {
+      List<Allstore> stores = [];
+      return stores;
+    } else {
+      throw Exception('Failed to fetch stores');
     }
   }
 }
